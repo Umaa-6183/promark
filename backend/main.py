@@ -108,3 +108,8 @@ class Feedback(BaseModel):
 def post_feedback(fb: Feedback):
     feedback_store.append(fb.dict())
     return {"message": "Feedback received", "data": fb}
+
+
+@app.get("/feedbacks")
+def get_feedbacks():
+    return {"feedbacks": feedback_store}
