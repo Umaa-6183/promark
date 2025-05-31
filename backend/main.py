@@ -1,4 +1,5 @@
 # main.py
+from fastapi import Body
 import os
 import pickle
 import numpy as np
@@ -93,3 +94,17 @@ def get_analytics():
         })
 
     return {"data": results}
+
+
+feedback_store = []  # In-memory storage for now
+
+
+class Feedback(BaseModel):
+    campaign_id: int
+    feedback: str  # "like" or "dislike"
+
+
+@app.post("/feedback")
+def post_feedback(fb: Feedback):
+    feedback_store.append(fb.dict())
+    return {"message": "Feedback received", "data": fb}
