@@ -1,5 +1,6 @@
 # main.py
 
+from fastapi.responses import JSONResponse
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List
@@ -44,3 +45,15 @@ def get_campaign(campaign_id: int):
 def create_campaign(campaign: Campaign):
     campaigns.append(campaign.dict())
     return campaign
+
+
+@app.get("/analytics")
+def get_analytics():
+    # Simulated ML output (could be from a real model later)
+    return JSONResponse(content={
+        "data": [
+            {"name": "Campaign 1", "reach": 4200, "clicks": 1200},
+            {"name": "Campaign 2", "reach": 3800, "clicks": 1900},
+            {"name": "Campaign 3", "reach": 3000, "clicks": 800},
+        ]
+    })
