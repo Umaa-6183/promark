@@ -5,6 +5,7 @@ import json
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List
+from database import FeedbackDB, SessionLocal
 
 # Step 1: Initialize FastAPI app
 app = FastAPI(title="ProMark API", version="1.0.0")
@@ -23,12 +24,17 @@ with open(model_clicks_path, "rb") as f:
     model_clicks = pickle.load(f)
 
 # Step 3: Load feedback classifier model (optional)
-feedback_model_path = os.path.join(MODEL_DIR, "feedback_classifier.pkl")
+feedback_model_path = os.path.abspath(os.path.join(
+    os.path.dirname(__file__), '..', 'ml_models', 'feedback_classifier.pkl'))
+print("🔍 Model path resolved to:", feedback_model_path)
+
 try:
     with open(feedback_model_path, "rb") as f:
         feedback_model = pickle.load(f)
-except Exception:
+except Exception as e:
+    print(f"⚠️ Could not load feedback model: {e}")
     feedback_model = None
+
 
 # In-memory campaign list
 campaigns = [
@@ -37,7 +43,7 @@ campaigns = [
 ]
 
 # In-memory feedback storage
-feedback_store = []
+
 
 # -------------------------------
 # 🧩 API SCHEMAS
@@ -112,23 +118,25 @@ def get_analytics():
 
 @app.post("/feedback")
 def post_feedback(fb: Feedback):
-    feedback_store.append(fb.dict())
-
-    # Save to file
-    feedback_file = os.path.join(
-        os.path.dirname(__file__), "feedback_data.json")
-    try:
-        with open(feedback_file, "a") as f:
-            f.write(json.dumps(fb.dict()) + "\n")
-    except Exception as e:
-        print("⚠️ Error saving feedback to file:", e)
-
-    return {"message": "Feedback received", "data": fb}
+    db = SessionLocal()
+    record = FeedbackDB(campaign_id=fb.campaign_id, feedback=fb.feedback)
+    db.add(record)
+    db.commit()
+    db.refresh(record)
+    db.close()
+    return {"message": "Feedback saved to database", "data": fb}
 
 
 @app.get("/feedbacks")
 def get_feedbacks():
-    return {"feedbacks": feedback_store}
+    db = SessionLocal()
+    all_feedbacks = db.query(FeedbackDB).all()
+    db.close()
+    return {
+        "feedbacks": [
+            {"campaign_id": f.campaign_id, "feedback": f.feedback} for f in all_feedbacks
+        ]
+    }
 
 
 @app.post("/predict-feedback")
