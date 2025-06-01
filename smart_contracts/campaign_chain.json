@@ -1,0 +1,14 @@
+[
+  {
+    "id": 101,
+    "name": "Diwali Special",
+    "status": "active",
+    "timestamp": "2025-06-01T20:50:09.980Z"
+  },
+  {
+    "id": 202,
+    "name": "Summer Sale",
+    "status": "scheduled",
+    "timestamp": "2025-06-01T20:52:32.527Z"
+  }
+]

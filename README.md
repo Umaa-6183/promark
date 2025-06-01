@@ -1,118 +1,159 @@
-# 📣 ProMark: AI-Powered Proximity Marketing Platform
+📣 ProMark: AI-Powered, Privacy-Aware Proximity Marketing System
+🎓 A full-stack AI/ML research project for real-time advertising, feedback prediction, and campaign analytics
 
-**ProMark** is a full-stack, real-time, AI-integrated proximity marketing system that ensures transparency and privacy-awareness in advertising campaigns.
+🚀 Overview
+ProMark is a system designed to ensure transparency, intelligence, and privacy in proximity marketing using:
 
-## 🎯 Features
+🧠 Supervised Machine Learning
 
-✅ ReactJS Admin Dashboard  
-✅ Expo-based Mobile App  
-✅ FastAPI Backend with ML Models  
-✅ SQLite Database for persistent feedback  
-✅ AI-powered predictions using scikit-learn 
-✅ Smart contract simulation (Hyperledger Fabric - JS)  
-✅ Deployment-ready structure with Render + GitHub Actions  
-✅ Render Deployment (Free cloud backend)  
-✅ GitHub Integration & Auto Deploy
+📊 Campaign Analytics
 
----
+📱 Mobile + Web Interfaces
 
-## 📦 Project Structure
+🔐 Blockchain Simulation for Auditability
+
+🧠 Features
+| Component           | Description                                            |
+| ------------------- | ------------------------------------------------------ |
+| 🧠 ML Models        | Predict campaign reach, clicks, and feedback           |
+| 📊 Web Dashboard    | Admin UI to monitor, analyze, and manage campaigns     |
+| 📱 Mobile App       | Users give feedback, see campaigns, run ML predictions |
+| 🔐 Smart Contracts  | Simulated blockchain logs for trust & transparency     |
+| ☁️ Cloud Deployment | Fully deployed backend (Render) and mobile (Expo)      |
+
+
+🗂️ Project Structure
 
 ProMark/
-├── backend/ # FastAPI backend + SQLite + ML model serving
-├── ml_models/ # Trained .pkl model files + training scripts
-├── web_dashboard/ # ReactJS frontend (campaign analytics & UI)
-├── mobile_app/ # React Native mobile app using Expo
-├── smart_contracts/ # Simulated blockchain smart contracts (JS)
-├── deployment/ # Render configs, .envs, future cloud scripts
-├── README.md # You're here!
+├── backend/             # FastAPI + SQLite + ML API
+├── web_dashboard/       # ReactJS admin UI
+├── mobile_app/          # Expo-based mobile app
+├── ml_models/           # ML training scripts + saved .pkl models
+├── smart_contracts/     # Simulated blockchain logs
+├── deployment/          # Render + Vercel setup & docs
+└── README.md            # You are here!
 
----
+🧪 Machine Learning Models
 
-## 🚀 Live Backend API
+| Model File                | Role                                  |
+| ------------------------- | ------------------------------------- |
+| `model_reach.pkl`         | Predicts campaign reach               |
+| `model_clicks.pkl`        | Predicts ad clicks                    |
+| `feedback_classifier.pkl` | Predicts user feedback (like/dislike) |
 
-🔗 [https://promark-backend.onrender.com](https://promark-backend.onrender.com)  
-📚 [Swagger Docs](https://promark-backend.onrender.com/docs)
+📁 Training Scripts:
 
-Testable endpoints:
-- `/campaigns`  
-- `/analytics`  
-- `/feedback`  
-- `/feedbacks`  
-- `/predict-feedback`
+cd ml_models
+python train_model.py             # reach & clicks
+python train_feedback_model.py    # feedback classifier
 
----
-
-## ⚙️ How to Run Locally
-
-### 1. Backend
-
-```bash
+🔧 How to Run
+1. 🌐 Backend (FastAPI)
+   
 cd backend
 python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
 uvicorn main:app --reload
 
-### 2.Train ML Model
+API Docs: http://localhost:8000/docs
 
-```bash
-cd ml_models
-python train_model.py
-python train_feedback_model.py
-
-### 3. Web Dashboard(React)
-
+2. 📊 Web Dashboard (React)
+   
 cd web_dashboard
 npm install
 npm start
 
-### 4. Mobile App (Expo)
+📍 Visit: http://localhost:3000
+
+3. 📱 Mobile App (Expo)
 
 cd mobile_app/promark-mobile
 npm install
 npm start
 
-Machine Learning Models
-model_reach.pkl — Predicts campaign reach
+🔍 Replace localhost with your local IP inside App.js:
 
-model_clicks.pkl — Predicts number of ad clicks
+const API_BASE = 'http://192.168.X.X:8000';
 
-feedback_classifier.pkl — Predicts user sentiment from campaign inputs
+Scan QR with Expo Go app on your phone.
 
-All models use scikit-learn and were trained on synthetic + collected feedback.
+4. 🔐 Smart Contracts (Simulation)
 
-📊 Core APIs
-Method	Route	Description
-GET	/campaigns	Fetch all campaigns
-POST	/campaigns	Create a new campaign
-GET	/analytics	Predict reach & clicks (ML)
-POST	/feedback	Submit user feedback
-GET	/feedbacks	Get all feedbacks (DB)
-POST	/predict-feedback	Predict like/dislike (ML)
+cd smart_contracts
+node simulator.js
+
+Creates:
+
+campaign_chain.json
+
+feedback_chain.json
+
+☁️ Deployment
+🔧 Backend: Render.com
+
+💻 Frontend: (Optional) Vercel/Netlify
+
+📱 Mobile: Expo Go (no deploy needed)
+
+| Step | Action                            | Result                                      |
+| ---- | --------------------------------- | ------------------------------------------- |
+| 1️⃣  | Create campaign on dashboard      | Appears in mobile + chart updates           |
+| 2️⃣  | Submit feedback via mobile        | Stored in DB + visualized on dashboard      |
+| 3️⃣  | Predict feedback (mobile or web)  | Output from real ML model                   |
+| 4️⃣  | Trigger smart contract simulation | Blockchain-like audit trail in `.json` logs |
+
+📸 Screenshots (Optional)
+Add screenshots of:
+
+Campaign analytics bar chart
+
+Feedback chart (like/dislike)
+
+Mobile app with feedback buttons
+
+Swagger API docs
+
+
+✅ Built With
+Python 3.10 + FastAPI
+
+ReactJS + Tailwind
+
+React Native / Expo
+
+SQLite + pickle models
+
+scikit-learn, pandas, numpy, recharts
+
+📚 Research Scope
+
+M.Tech Project:
+Cross-Cultural, Context-Aware Multi-Modal Emotion & Feedback Recognition in Proximity Advertising
+
+ProMark demonstrates:
+
+Supervised learning (classification & regression)
+
+Real-time user feedback loops
+
+Interoperability of AI + UI + blockchain-inspired trust
+
+🤝 Acknowledgements
+scikit-learn
+
+FastAPI
+
+React Native Expo
+
+Render.com
+
+💡 Inspired by IEEE Paper: ProMark: Ensuring Transparency and Privacy-Awareness in Proximity Marketing Campaigns
 
 🧾 License
-MIT — Free to use for educational and research purposes.
+MIT — use, improve, and credit freely!
 
-👨‍💻 Built by
-UmaaSV 2025
-📧 Contact: [your-email@example.com]
-🌐 GitHub: github.com/Umaa-6183
-
-
-</details>
-
-✅ Save the file (`Ctrl + S`)
-
----
-
-### ✅ 4. **Push It to GitHub**
-
-Now open terminal inside `ProMark/`:
-
-```bash
-cd C:\Users\umaam\OneDrive\Desktop\ProMark
-
-git add README.md
-git commit -m "Add project README"
-git push
+📬 Contact
+Author: Umaa-6183
+Supervisor: Kamal Sir
+GitHub Repo: ProMark GitHub

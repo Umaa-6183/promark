@@ -2,27 +2,25 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-const feedbackLogPath = path.join(__dirname, 'feedback_chain.json');
+const logFile = path.join(__dirname, 'feedback_chain.json');
 
-function hashFeedback(feedback) {
-  return crypto.createHash('sha256').update(feedback).digest('hex');
-}
+function storeFeedbackHash(campaignId, feedback) {
+  let logs = [];
 
-function storeFeedbackProof(campaign_id, feedback) {
-  const data = fs.existsSync(feedbackLogPath)
-    ? JSON.parse(fs.readFileSync(feedbackLogPath))
-    : [];
+  if (fs.existsSync(logFile)) {
+    logs = JSON.parse(fs.readFileSync(logFile));
+  }
 
-  const hash = hashFeedback(feedback);
+  const hash = crypto.createHash('sha256').update(feedback).digest('hex');
   const record = {
-    campaign_id,
+    campaign_id: campaignId,
     feedback_hash: hash,
-    timestamp: new Date().toISOString(),
+    timestamp: new Date().toISOString()
   };
 
-  data.push(record);
-  fs.writeFileSync(feedbackLogPath, JSON.stringify(data, null, 2));
-  console.log("🧾 Feedback hash stored on-chain:", record);
+  logs.push(record);
+  fs.writeFileSync(logFile, JSON.stringify(logs, null, 2));
+  console.log('🧾 Feedback hashed & stored:', record);
 }
 
-module.exports = { storeFeedbackProof };
+module.exports = { storeFeedbackHash };

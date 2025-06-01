@@ -1,92 +1,68 @@
 # 🚀 ProMark Deployment Guide
 
-This folder contains deployment setup and instructions for the ProMark project.
+This folder contains deployment configurations for cloud hosting and CI/CD.
 
 ---
 
-## 1. 🌐 Backend Deployment (FastAPI on Render)
+## 🌐 Backend Deployment (Render)
 
-### ✅ Already Deployed:
-🔗 [https://promark-backend.onrender.com](https://promark-backend.onrender.com)
+1. Visit: https://render.com
+2. Sign in with GitHub
+3. Click "New Web Service"
+4. Connect to your repo
+5. Set:
+   - **Root Dir** = `backend`
+   - **Build Command** = `pip install -r requirements.txt`
+   - **Start Command** = `uvicorn main:app --host 0.0.0.0 --port 10000`
+6. Hit **Deploy**
 
-### 🛠 To Redeploy Manually:
-
-1. Go to [https://render.com](https://render.com)
-2. Log in with your GitHub (Umaa-6183)
-3. Click **New + → Web Service**
-4. Choose your repo → `promark-backend`
-5. Fill the fields:
-   - **Environment:** Python 3
-   - **Build Command:** `pip install -r backend/requirements.txt`
-   - **Start Command:** `uvicorn backend.main:app --host 0.0.0.0 --port 10000`
-   - **Root Directory:** `backend`
-6. Hit **Create Web Service**
-
-✅ Backend auto-deploys every time you push to GitHub!
+✅ Done! Your backend is now live.
 
 ---
 
-## 2. 🖥️ Web Dashboard Deployment (React)
+## 🖥️ Frontend (React) — Optional Cloud Deployment
 
-### Option 1: Local Run
+Use:
+- [https://vercel.com](https://vercel.com)
+- [https://netlify.com](https://netlify.com)
+
+Set:
+- **Root Dir** = `web_dashboard`
+- **Build Command** = `npm run build`
+- **Start** = automatic
+
+---
+
+## 📱 Mobile (Expo)
+
+No cloud deploy needed. Just run:
 
 ```bash
-cd web_dashboard
-npm install
-npm start
-
-Option 2: Deploy to Vercel (Optional)
-Go to https://vercel.com
-
-Click "Import Project" → Connect your GitHub
-
-Choose the web_dashboard folder
-
-Set Root Directory = web_dashboard
-
-Auto-build & deploy 🚀
-
-3. 📱 Mobile App (Expo)
-No hosting needed! Use Expo Go.
-
-bash
-Copy code
 cd mobile_app/promark-mobile
-npm install
 npm start
-📱 Scan the QR code in Expo Go app to run it on your phone.
 
-4. 🔐 Environment Variables (Optional)
-If needed in future:
+Then scan QR in the Expo Go app.
 
-bash
-Copy code
-.env
-bash
-Copy code
-DB_PATH=sqlite:///./feedbacks.db
-RENDER_KEY=your-api-key
+💡 Custom Envs
+Use .env file if you move to PostgreSQL or Supabase:
 
-5. 📂 Deployment Files
-File	Description
-render.yaml	Backend deploy config (for Render.com)
-.env.example	Template for your .env variables
-
-✅ Done!
-Once deployed, your API is always live at:
-
-🌐 https://promark-backend.onrender.com
-📚 Docs: /docs
+DB_URL=your_cloud_db
+API_KEY=...
 
 
 ---
 
-### ✅ Step 2: (Optional) Create `.env.example`
+## ✅ Done!
 
-Only if you're using `.env` in future (currently not needed for SQLite, but useful for PostgreSQL/Supabase):
+You now have:
 
-📄 `deployment/.env.example`
+✅ `backend/` → Deployed via Render  
+✅ `web_dashboard/` → Ready for Netlify/Vercel  
+✅ `mobile_app/` → QR-ready for Expo  
+✅ `smart_contracts/` → Local simulation for transparency  
+✅ `ml_models/` → AI predictions for analytics + feedback  
+✅ `README.md` + `.env.example` → DevOps best practices
 
-```bash
-DB_PATH=sqlite:///./feedbacks.db
-RENDER_KEY=your-api-key
+---
+
+

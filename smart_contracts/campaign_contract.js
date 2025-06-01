@@ -1,23 +1,25 @@
 const fs = require('fs');
 const path = require('path');
 
-const campaignLogPath = path.join(__dirname, 'campaign_chain.json');
+const logFile = path.join(__dirname, 'campaign_chain.json');
 
 function storeCampaign(campaign) {
-  const data = fs.existsSync(campaignLogPath)
-    ? JSON.parse(fs.readFileSync(campaignLogPath))
-    : [];
+  let logs = [];
+
+  if (fs.existsSync(logFile)) {
+    logs = JSON.parse(fs.readFileSync(logFile));
+  }
 
   const record = {
     id: campaign.id,
     name: campaign.name,
     status: campaign.status,
-    timestamp: new Date().toISOString(),
+    timestamp: new Date().toISOString()
   };
 
-  data.push(record);
-  fs.writeFileSync(campaignLogPath, JSON.stringify(data, null, 2));
-  console.log("✅ Campaign stored on-chain:", record);
+  logs.push(record);
+  fs.writeFileSync(logFile, JSON.stringify(logs, null, 2));
+  console.log('✅ Campaign stored:', record);
 }
 
 module.exports = { storeCampaign };

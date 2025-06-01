@@ -1,45 +1,34 @@
-# 🧠 ProMark Smart Contracts (Simulated)
+# 🔐 ProMark Simulated Smart Contracts
 
-This module simulates blockchain smart contract behavior for:
+This folder simulates blockchain-like storage of campaigns and feedbacks using JSON logs.
 
-- 📦 Campaign logging (transparency)
-- 🧾 Feedback hash storing (privacy-aware proof)
+## 🔧 How It Works
 
-## How It Works
+- `campaign_contract.js`: Stores campaign creation as a transaction
+- `feedback_contract.js`: Stores feedback as SHA256 hash
+- `simulator.js`: Runs both
 
-- `campaign_contract.js` → Logs campaigns to `campaign_chain.json`
-- `feedback_contract.js` → Stores SHA-256 hashes of feedbacks
-
-## Run Locally
+## ▶️ How to Run
 
 ```bash
 cd smart_contracts
 node simulator.js
 
-✅ JSON logs will be saved as:
+📁 Output
+campaign_chain.json: Stored campaigns
 
-campaign_chain.json
+feedback_chain.json: Stored hashed feedback
 
-feedback_chain.json
-
-No Docker, no Fabric — 100% JS-based simulation.
+✅ No blockchain required. Just trustable logs for academic + demo purposes.
 
 
 ---
 
-### ✅ Step 6: Run and Test
-
-In terminal:
+## ✅ Done? Then run it:
 
 ```bash
-cd C:\Users\umaam\OneDrive\Desktop\ProMark\smart_contracts
+cd ProMark/smart_contracts
 node simulator.js
 
+You should see .json logs created and console.log outputs.
 
-✅ You should see:
-
-campaign_chain.json created
-
-feedback_chain.json created
-
-Console logs confirming both
