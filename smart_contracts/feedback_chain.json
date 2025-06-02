@@ -18,5 +18,15 @@
     "campaign_id": 101,
     "feedback_hash": "e4d14bef7aa0668546bc69bf39adce5193e7e0006b24bfc81feed38693f38ae7",
     "timestamp": "2025-06-01T20:52:32.540Z"
+  },
+  {
+    "campaign_id": 202,
+    "feedback_hash": "cab2644828bcc1f220612fde559864da2c5bf0c6eebdcadbb4a4c88c9fcf3927",
+    "timestamp": "2025-06-02T06:08:46.605Z"
+  },
+  {
+    "campaign_id": 101,
+    "feedback_hash": "e4d14bef7aa0668546bc69bf39adce5193e7e0006b24bfc81feed38693f38ae7",
+    "timestamp": "2025-06-02T06:08:46.606Z"
   }
 ]

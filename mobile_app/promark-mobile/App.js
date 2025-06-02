@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import Constants from 'expo-constants';
 
-const API_BASE = 'http://<YOUR_LOCAL_IP>:8000'; // Replace this with your local IP
+const API_BASE = 'http://192.168.X.X:8000';
+ // Replace this with your local IP
 
 export default function App() {
   const [campaigns, setCampaigns] = useState([]);

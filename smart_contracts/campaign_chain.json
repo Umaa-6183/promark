@@ -10,5 +10,11 @@
     "name": "Summer Sale",
     "status": "scheduled",
     "timestamp": "2025-06-01T20:52:32.527Z"
+  },
+  {
+    "id": 202,
+    "name": "Summer Sale",
+    "status": "scheduled",
+    "timestamp": "2025-06-02T06:08:46.593Z"
   }
 ]
