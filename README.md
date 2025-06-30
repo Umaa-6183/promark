@@ -1,159 +1,164 @@
-📣 ProMark: AI-Powered, Privacy-Aware Proximity Marketing System
-🎓 A full-stack AI/ML research project for real-time advertising, feedback prediction, and campaign analytics
+# SmartAdX 🎯
+**An AI-Powered, Privacy-Aware Feedback and Ad Prediction System for Electronic Retail**
 
-🚀 Overview
-ProMark is a system designed to ensure transparency, intelligence, and privacy in proximity marketing using:
+> Built with FastAPI · ReactJS · React Native · Scikit-Learn · Python · JSON Chain · Render · Expo
 
-🧠 Supervised Machine Learning
+---
 
-📊 Campaign Analytics
+## 📌 Project Overview
 
-📱 Mobile + Web Interfaces
+**SmartAdX** is an advanced proximity marketing and feedback system tailored for **electronics retail environments**.  
+It uses supervised **AI/ML models** to analyze customer feedback, predict future interests, and display **personalized advertisements** — in real time.
 
-🔐 Blockchain Simulation for Auditability
+---
 
-🧠 Features
-| Component           | Description                                            |
-| ------------------- | ------------------------------------------------------ |
-| 🧠 ML Models        | Predict campaign reach, clicks, and feedback           |
-| 📊 Web Dashboard    | Admin UI to monitor, analyze, and manage campaigns     |
-| 📱 Mobile App       | Users give feedback, see campaigns, run ML predictions |
-| 🔐 Smart Contracts  | Simulated blockchain logs for trust & transparency     |
-| ☁️ Cloud Deployment | Fully deployed backend (Render) and mobile (Expo)      |
+## 🚀 Live Demo
+
+- 🌐 Backend API: [`https://promark-backend.onrender.com`](https://promark-backend.onrender.com)
+- 📱 Mobile App: Built with **React Native + Expo** (customer feedback & ad display)
+- 💻 Web Dashboard: Admin interface to monitor campaigns & predictions
+
+---
+
+## 💡 Use Case
+
+A customer purchases a gadget → fills a feedback form → backend processes it → ML model predicts what they might buy next → the **predicted ad is instantly shown** to them via the mobile app.
+
+---
+
+## 🧠 Key Features
+
+| Feature                             | Description                                                                 |
+|-------------------------------------|-----------------------------------------------------------------------------|
+| 📋 Feedback Form                    | Full details: name, phone, item purchased, future interests                |
+| 🤖 ML Prediction                    | Predicts next likely electronics product the customer might be interested in |
+| 🔐 Privacy-Aware Logging            | Blockchain-like immutable feedback log using SHA256 hashes & timestamp     |
+| 📲 Real-Time Ad Display             | Personalized ad shown instantly in Expo app after feedback submission      |
+| 📊 Admin Dashboard                  | View analytics & ML results using ReactJS + Tailwind                       |
+| 🌐 Auto-Deployed Backend            | FastAPI backend hosted on **Render.com** with auto-redeploy on Git push    |
+
+---
+
+## 🧰 Tech Stack
+
+| Layer         | Technologies Used                                           |
+|---------------|-------------------------------------------------------------|
+| 🔧 Backend     | Python · FastAPI · Pickle · Scikit-learn                    |
+| 🎨 Web App     | ReactJS · Tailwind CSS · Chart.js                           |
+| 📱 Mobile App  | React Native · Expo · REST API                              |
+| 🔐 Blockchain  | Simulated smart contracts via hashed JSON logs             |
+| ☁ Deployment   | Render (Backend) · GitHub CI · Local development tools      |
+
+---
+
+## 📁 Folder Structure
+
+SmartAdX/
+├── backend/ # FastAPI backend + ML integration
+├── web_dashboard/ # ReactJS dashboard with Tailwind charts
+├── mobile_app/ # React Native app for user feedback
+├── ml_models/ # Training scripts + ad_predictor.pkl
+├── smart_contracts/ # Feedback logging with hash + timestamp
+├── deployment/ # Render deployment config (render.yaml)
+└── README.md
 
 
-🗂️ Project Structure
+---
 
-ProMark/
-├── backend/             # FastAPI + SQLite + ML API
-├── web_dashboard/       # ReactJS admin UI
-├── mobile_app/          # Expo-based mobile app
-├── ml_models/           # ML training scripts + saved .pkl models
-├── smart_contracts/     # Simulated blockchain logs
-├── deployment/          # Render + Vercel setup & docs
-└── README.md            # You are here!
+## 🔍 How It Works (Flow)
 
-🧪 Machine Learning Models
+1. **Customer buys a product** in-store  
+2. **Fills feedback form** in the mobile app (Expo)  
+3. Form is submitted to **FastAPI backend**  
+4. ML model (`ad_predictor.pkl`) predicts what product they're likely to purchase next  
+5. Result is displayed instantly on-screen  
+6. Feedback is stored in memory and logged in an **immutable blockchain-style JSON ledger**  
 
-| Model File                | Role                                  |
-| ------------------------- | ------------------------------------- |
-| `model_reach.pkl`         | Predicts campaign reach               |
-| `model_clicks.pkl`        | Predicts ad clicks                    |
-| `feedback_classifier.pkl` | Predicts user feedback (like/dislike) |
+---
 
-📁 Training Scripts:
+## 🧠 Machine Learning (Supervised)
 
-cd ml_models
-python train_model.py             # reach & clicks
-python train_feedback_model.py    # feedback classifier
+| Model Name           | Algorithm          | Input Features                       | Output                 |
+|----------------------|--------------------|--------------------------------------|------------------------|
+| `ad_predictor.pkl`   | Logistic Regression (multi-class) | Future interest categories | Next ad category       |
+| `train_ad_predictor.py` | Training script for simulated electronics preferences | Trains & saves model |
 
-🔧 How to Run
-1. 🌐 Backend (FastAPI)
-   
+---
+
+## 🔒 Privacy and Trust
+
+- All feedback is logged using a **hash chain structure**
+- Each feedback has a `SHA-256` hash and timestamp
+- Stored inside: `smart_contracts/feedback_chain.json`
+
+---
+
+## 📦 Installation & Local Setup
+
+### ✅ Backend (FastAPI)
+```bash
 cd backend
 python -m venv venv
-venv\Scripts\activate
+venv\Scripts\activate   # (or source venv/bin/activate on Mac/Linux)
 pip install -r requirements.txt
 uvicorn main:app --reload
 
-API Docs: http://localhost:8000/docs
+✅ Web Dashboard
 
-2. 📊 Web Dashboard (React)
-   
 cd web_dashboard
 npm install
 npm start
 
-📍 Visit: http://localhost:3000
-
-3. 📱 Mobile App (Expo)
+✅ Mobile App (Expo)
 
 cd mobile_app/promark-mobile
 npm install
-npm start
+npx expo start
 
-🔍 Replace localhost with your local IP inside App.js:
+Important: Use your local IP in App.js instead of localhost for backend access in Expo app.
 
-const API_BASE = 'http://192.168.X.X:8000';
+📊 Sample Feedback Entry
 
-Scan QR with Expo Go app on your phone.
-
-4. 🔐 Smart Contracts (Simulation)
-
-cd smart_contracts
-node simulator.js
-
-Creates:
-
-campaign_chain.json
-
-feedback_chain.json
-
-☁️ Deployment
-🔧 Backend: Render.com
-
-💻 Frontend: (Optional) Vercel/Netlify
-
-📱 Mobile: Expo Go (no deploy needed)
-
-| Step | Action                            | Result                                      |
-| ---- | --------------------------------- | ------------------------------------------- |
-| 1️⃣  | Create campaign on dashboard      | Appears in mobile + chart updates           |
-| 2️⃣  | Submit feedback via mobile        | Stored in DB + visualized on dashboard      |
-| 3️⃣  | Predict feedback (mobile or web)  | Output from real ML model                   |
-| 4️⃣  | Trigger smart contract simulation | Blockchain-like audit trail in `.json` logs |
-
-📸 Screenshots (Optional)
-Add screenshots of:
-
-Campaign analytics bar chart
-
-Feedback chart (like/dislike)
-
-Mobile app with feedback buttons
-
-Swagger API docs
+{
+  "name": "Ankit",
+  "phone": "9876543210",
+  "transaction_id": "TXN12345",
+  "purchased_item": "Smartphone",
+  "future_interest": ["Smartwatch", "Tablet"]
+}
 
 
-✅ Built With
-Python 3.10 + FastAPI
+🧬 Example Prediction Response
 
-ReactJS + Tailwind
+{
+  "message": "Feedback received",
+  "predicted_ad": "Smartwatch"
+}
 
-React Native / Expo
+📚 Literature References
+A. Gilal et al., "ProMark: Ensuring Transparency and Privacy-Awareness in Proximity Marketing Advertising Campaigns", IEEE Access, 2021
 
-SQLite + pickle models
+ACM Survey, "Context-Aware Proactive Systems using ML", ACM Computing Surveys, 2020
 
-scikit-learn, pandas, numpy, recharts
+FastAPI · React Native · Scikit-learn Official Docs
 
-📚 Research Scope
+📌 Authors & Contributors
+🧑‍💻 Umaa Maheshwary SV – Project Lead
 
-M.Tech Project:
-Cross-Cultural, Context-Aware Multi-Modal Emotion & Feedback Recognition in Proximity Advertising
+🤖 Assisted by GPT-4 (Planning, ML, Code Integration)
 
-ProMark demonstrates:
+🎓 Rajarajeswari College of Engineering
 
-Supervised learning (classification & regression)
+📎 License
+MIT License – use, modify and contribute freely 🎉
 
-Real-time user feedback loops
 
-Interoperability of AI + UI + blockchain-inspired trust
+---
 
-🤝 Acknowledgements
-scikit-learn
+Would you like me to convert this into:
 
-FastAPI
+- 📄 A downloadable `.md` file?
+- 📑 A 1-page summary PDF?
+- 🎤 A live demo script or viva guide?
 
-React Native Expo
-
-Render.com
-
-💡 Inspired by IEEE Paper: ProMark: Ensuring Transparency and Privacy-Awareness in Proximity Marketing Campaigns
-
-🧾 License
-MIT — use, improve, and credit freely!
-
-📬 Contact
-Author: Umaa-6183
-Supervisor: Kamal Sir
-GitHub Repo: ProMark GitHub
+Let’s wrap this up strong 💪
