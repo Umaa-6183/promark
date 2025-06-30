@@ -1,4 +1,5 @@
 import os
+import sys
 import uuid
 import json
 import pickle
@@ -6,31 +7,41 @@ import numpy as np
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-from smart_contracts.log_chain import log_to_chain
+import importlib.util
 
-# Initialize FastAPI app
+# ✅ Dynamically import log_chain.py
+log_chain_path = os.path.abspath(os.path.join(
+    os.path.dirname(__file__), '..', 'smart_contracts', 'log_chain.py'))
+spec = importlib.util.spec_from_file_location("log_chain", log_chain_path)
+log_chain = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(log_chain)
+
+# ✅ Initialize FastAPI
 app = FastAPI(title="SmartAdX API")
 
-# Enable CORS for frontend/mobile integration
+# ✅ Enable CORS for frontend/mobile access
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all for dev purposes
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Load ML model on startup
-MODEL_PATH = os.path.join(os.path.dirname(
-    __file__), "../ml_models/ad_predictor.pkl")
-with open(MODEL_PATH, "rb") as f:
+# ✅ Load ML model and encoder
+MODEL_DIR = os.path.abspath(os.path.join(
+    os.path.dirname(__file__), '..', 'ml_models'))
+with open(os.path.join(MODEL_DIR, "ad_predictor.pkl"), "rb") as f:
     ad_model = pickle.load(f)
 
-# In-memory simulated DB
-feedback_store = []
-campaigns = []  # Optional if you plan to add campaign creation
+with open(os.path.join(MODEL_DIR, "ad_encoder.pkl"), "rb") as f:
+    ad_encoder = pickle.load(f)
 
-# Data model for feedback form
+# ✅ In-memory stores
+feedback_store = []
+campaigns = []
+
+# ✅ Pydantic model for feedback form
 
 
 class FeedbackForm(BaseModel):
@@ -38,7 +49,7 @@ class FeedbackForm(BaseModel):
     phone: str
     transaction_id: str
     purchased_item: str
-    future_interest: list  # e.g., ["Smartwatch", "Tablet"]
+    future_interest: list
 
 
 @app.get("/")
@@ -51,11 +62,23 @@ def get_campaigns():
     return campaigns
 
 
+@app.get("/feedbacks")
+def list_feedbacks():
+    return {"feedbacks": feedback_store}
+
+
 @app.post("/feedback")
 def receive_feedback(data: FeedbackForm):
-    token = str(uuid.uuid4())
-    prediction = ad_model.predict([data.future_interest])[0]
+    try:
+        # 🔁 Encode future interest using the encoder
+        encoded_input = ad_encoder.transform([data.future_interest])
+        prediction = ad_model.predict(encoded_input)[0]
+        token = str(uuid.uuid4())
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Prediction failed: {str(e)}")
 
+    # ✅ Feedback Entry
     entry = {
         "token": token,
         "name": data.name,
@@ -68,12 +91,26 @@ def receive_feedback(data: FeedbackForm):
 
     feedback_store.append(entry)
 
-    # ✅ Log to blockchain-like JSON file with hash + timestamp
-    log_to_chain(data.transaction_id, entry)
+    # ✅ Log to pseudo blockchain file
+    log_path = os.path.abspath(os.path.join(os.path.dirname(
+        __file__), '..', 'smart_contracts', 'feedback_chain.json'))
+    if os.path.exists(log_path):
+        with open(log_path, "r") as f:
+            logs = json.load(f)
+    else:
+        logs = []
 
-    return {"message": "Feedback received", "predicted_ad": prediction}
+    logs.append({
+        "campaign_id": data.transaction_id,
+        "feedback_hash": log_chain.hash_feedback(entry),
+        "timestamp": str(uuid.uuid1().time)
+    })
 
+    with open(log_path, "w") as f:
+        json.dump(logs, f, indent=2)
 
-@app.get("/feedbacks")
-def list_feedbacks():
-    return {"feedbacks": feedback_store}
+    return {
+        "message": "✅ Feedback received",
+        "predicted_ad": prediction,
+        "token": token
+    }

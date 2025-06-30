@@ -4,7 +4,7 @@ import {
   StyleSheet, ScrollView, ActivityIndicator, Alert
 } from 'react-native';
 
-const API_BASE = 'https://promark-backend.onrender.com';
+const API_BASE = 'http://192.168.41.65:8000'; // Replace with your local IP
 
 export default function App() {
   const [campaigns, setCampaigns] = useState([]);

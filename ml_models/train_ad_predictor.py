@@ -1,36 +1,34 @@
-import pandas as pd
-from sklearn.tree import DecisionTreeClassifier
 import pickle
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import MultiLabelBinarizer
 
-# Sample training dataset (You can expand this)
-data = pd.DataFrame({
-    "transaction_id": ["T1", "T2", "T3", "T4", "T5"],
-    "purchased_item": ["Laptop", "Phone", "TV", "Tablet", "Camera"],
-    "future_interest": [
-        "Mouse,Keyboard",
-        "Earphones,Charger",
-        "Soundbar,HDMI Cable",
-        "Stylus,Case",
-        "Tripod,Lens"
-    ],
-    "ad_category": ["Accessories", "Audio", "Home Entertainment", "Tablet Accessories", "Photography"]
-})
+# 🧪 Dummy training data
+X_raw = [
+    ["Tablet", "Laptop"],
+    ["Smartwatch"],
+    ["Tablet", "Smartwatch"],
+    ["Laptop"],
+    ["Camera"],
+    ["Tablet", "Camera"]
+]
 
-# Encode interests as features
-def encode_interests(interests):
-    interest_list = interests.split(",")
-    keywords = ["Mouse", "Keyboard", "Earphones", "Charger", "Soundbar", "HDMI Cable", "Stylus", "Case", "Tripod", "Lens"]
-    return [1 if kw in interest_list else 0 for kw in keywords]
+y = ["Gadget Promo", "Wearables", "Mixed",
+     "Gadget Promo", "Photography", "Mixed"]
 
-X = data["future_interest"].apply(encode_interests).tolist()
-y = data["ad_category"]
+# 🎛️ Encode list of interests into numeric features
+encoder = MultiLabelBinarizer()
+X = encoder.fit_transform(X_raw)
 
-# Train model
-model = DecisionTreeClassifier()
+# 🧠 Train model
+model = RandomForestClassifier()
 model.fit(X, y)
 
-# Save model
+# 💾 Save model
 with open("ad_predictor.pkl", "wb") as f:
     pickle.dump(model, f)
 
-print("✅ Model trained and saved as ad_predictor.pkl")
+# 💾 Save encoder
+with open("ad_encoder.pkl", "wb") as f:
+    pickle.dump(encoder, f)
+
+print("✅ ad_predictor.pkl and ad_encoder.pkl saved.")
