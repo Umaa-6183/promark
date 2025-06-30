@@ -1,60 +1,69 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
-import Constants from 'expo-constants';
+import React, { useState, useEffect } from 'react';
+import {
+  View, Text, TextInput, Button, FlatList,
+  StyleSheet, ScrollView, ActivityIndicator, Alert
+} from 'react-native';
 
-const API_BASE = 'http://192.168.X.X:8000';
- // Replace this with your local IP
+const API_BASE = 'https://promark-backend.onrender.com';
 
 export default function App() {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [impressions, setImpressions] = useState('');
-  const [duration, setDuration] = useState('');
-  const [prediction, setPrediction] = useState('');
+
+  const [form, setForm] = useState({
+    name: '',
+    phone: '',
+    transaction_id: '',
+    purchased_item: '',
+    future_interest: ''
+  });
+
+  const [predictedAd, setPredictedAd] = useState(null);
 
   const fetchCampaigns = async () => {
     try {
-      const response = await fetch(`${API_BASE}/campaigns`);
-      const data = await response.json();
+      const res = await fetch(`${API_BASE}/campaigns`);
+      const data = await res.json();
       setCampaigns(data);
-    } catch (error) {
-      console.error('Error fetching campaigns:', error);
+    } catch (err) {
+      console.error('Error fetching campaigns:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const sendFeedback = async (campaignId, feedback) => {
+  const submitFeedback = async () => {
+    if (
+      !form.name || !form.phone || !form.transaction_id ||
+      !form.purchased_item || !form.future_interest
+    ) {
+      Alert.alert('All fields are required');
+      return;
+    }
+
     try {
       const res = await fetch(`${API_BASE}/feedback`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ campaign_id: campaignId, feedback }),
-      });
-      const data = await res.json();
-      console.log('Feedback response:', data);
-      Alert.alert('Feedback Sent', `Feedback: ${feedback}`);
-    } catch (error) {
-      console.error('Error sending feedback:', error);
-      Alert.alert('Error', 'Failed to send feedback.');
-    }
-  };
-
-  const handlePredict = async () => {
-    try {
-      const res = await fetch(`${API_BASE}/predict-feedback`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          impressions: parseInt(impressions),
-          duration: parseInt(duration),
+          ...form,
+          future_interest: form.future_interest.split(',').map(item => item.trim())
         }),
       });
-      const data = await res.json();
-      setPrediction(data.prediction);
-    } catch (err) {
-      console.log("Prediction error:", err);
-      Alert.alert("Error", "Prediction failed.");
+
+      const result = await res.json();
+
+      if (res.ok) {
+        setPredictedAd(result.predicted_ad);
+        Alert.alert('✅ Feedback Submitted', `📢 Predicted Ad: ${result.predicted_ad}`);
+      } else {
+        console.error('Prediction error:', result);
+        Alert.alert('Error', result.detail || 'Something went wrong');
+      }
+
+    } catch (error) {
+      console.error('Submit error:', error);
+      Alert.alert('Network error');
     }
   };
 
@@ -62,74 +71,103 @@ export default function App() {
     fetchCampaigns();
   }, []);
 
-  const renderItem = ({ item }) => (
-    <View style={styles.card}>
-      <Text style={styles.title}>{item.name}</Text>
-      <Text style={styles.status}>Status: {item.status}</Text>
-      <View style={styles.buttonRow}>
-        <TouchableOpacity onPress={() => sendFeedback(item.id, 'like')}>
-          <Text style={styles.feedbackBtn}>👍 Like</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => sendFeedback(item.id, 'dislike')}>
-          <Text style={styles.feedbackBtn}>👎 Dislike</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>📣 Campaigns</Text>
+      <Text style={styles.title}>📋 SmartAdX Feedback Form</Text>
 
+      <TextInput
+        placeholder="Your Name"
+        style={styles.input}
+        value={form.name}
+        onChangeText={(text) => setForm({ ...form, name: text })}
+      />
+
+      <TextInput
+        placeholder="Phone Number"
+        keyboardType="phone-pad"
+        style={styles.input}
+        value={form.phone}
+        onChangeText={(text) => setForm({ ...form, phone: text })}
+      />
+
+      <TextInput
+        placeholder="Transaction ID"
+        style={styles.input}
+        value={form.transaction_id}
+        onChangeText={(text) => setForm({ ...form, transaction_id: text })}
+      />
+
+      <TextInput
+        placeholder="Purchased Item"
+        style={styles.input}
+        value={form.purchased_item}
+        onChangeText={(text) => setForm({ ...form, purchased_item: text })}
+      />
+
+      <TextInput
+        placeholder="Future Interest (comma-separated)"
+        style={styles.input}
+        value={form.future_interest}
+        onChangeText={(text) => setForm({ ...form, future_interest: text })}
+      />
+
+      <View style={{ marginTop: 10 }}>
+        <Button title="🚀 Submit Feedback" onPress={submitFeedback} />
+      </View>
+
+      {predictedAd && (
+        <View style={styles.result}>
+          <Text style={styles.prediction}>📢 Predicted Ad: {predictedAd}</Text>
+        </View>
+      )}
+
+      <Text style={styles.subheading}>📣 Campaigns</Text>
       {loading ? (
         <ActivityIndicator size="large" color="#0066cc" />
       ) : (
         <FlatList
           data={campaigns}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={renderItem}
+          keyExtractor={(item) => item.id?.toString() ?? Math.random().toString()}
+          renderItem={({ item }) => (
+            <View style={styles.card}>
+              <Text style={styles.campaignTitle}>{item.name}</Text>
+              <Text style={styles.status}>Status: {item.status}</Text>
+            </View>
+          )}
         />
-      )}
-
-      <Text style={styles.section}>🤖 Predict Feedback</Text>
-
-      <TextInput
-        placeholder="Impressions"
-        keyboardType="numeric"
-        value={impressions}
-        onChangeText={setImpressions}
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Duration (days)"
-        keyboardType="numeric"
-        value={duration}
-        onChangeText={setDuration}
-        style={styles.input}
-      />
-      <TouchableOpacity style={styles.predictBtn} onPress={handlePredict}>
-        <Text style={{ color: '#fff', textAlign: 'center' }}>Predict</Text>
-      </TouchableOpacity>
-
-      {prediction && (
-        <Text style={styles.predictionText}>
-          🎯 Predicted Feedback: <Text style={{ fontWeight: 'bold' }}>{prediction}</Text>
-        </Text>
       )}
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { paddingTop: Constants.statusBarHeight, padding: 20, backgroundColor: '#fff', flexGrow: 1 },
-  header: { fontSize: 24, fontWeight: 'bold', marginBottom: 10 },
-  card: { padding: 15, marginVertical: 8, backgroundColor: '#f0f0f0', borderRadius: 8 },
-  title: { fontSize: 18, fontWeight: '600' },
-  status: { fontSize: 14, color: '#555' },
-  buttonRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 },
-  feedbackBtn: { fontSize: 16, color: '#007BFF', paddingHorizontal: 10 },
-  section: { fontSize: 20, marginTop: 30, marginBottom: 10, fontWeight: 'bold' },
-  input: { borderWidth: 1, borderColor: '#ccc', padding: 8, marginBottom: 10, borderRadius: 6 },
-  predictBtn: { backgroundColor: '#28a745', padding: 10, borderRadius: 5 },
-  predictionText: { marginTop: 10, fontSize: 16, color: '#333' },
+  container: { padding: 20, backgroundColor: '#fff' },
+  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 10 },
+  subheading: { fontSize: 18, marginTop: 20, fontWeight: 'bold' },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
+    marginVertical: 6,
+    borderRadius: 5
+  },
+  result: {
+    marginVertical: 12,
+    padding: 10,
+    backgroundColor: '#e3f7e3',
+    borderRadius: 6
+  },
+  prediction: {
+    fontSize: 16,
+    color: 'green',
+    fontWeight: 'bold'
+  },
+  card: {
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: '#f2f2f2',
+    borderRadius: 6
+  },
+  campaignTitle: { fontSize: 16, fontWeight: 'bold' },
+  status: { fontSize: 14, color: '#666' },
 });

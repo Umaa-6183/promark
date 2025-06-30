@@ -1,9 +1,17 @@
 services:
   - type: web
     name: promark-backend
-    env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port 10000
-    plan: free
+    runtime: python
+    repo: https://github.com/YOUR_USERNAME/promark-backend
     branch: main
-    rootDir: backend
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port 10000
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.12
+      - key: PIP_NO_CACHE_DIR
+        value: "true"
+      - key: BACKEND_ENV
+        value: production
+    autoDeploy: true
+    rootDir: .

@@ -1,66 +1,62 @@
-import React, { useEffect, useState } from 'react';
-import { fetchCampaigns, createCampaign } from './api';
-import Analytics from './Analytics';
-import FeedbackChart from './FeedbackChart';
-import PredictForm from './PredictForm';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import "./index.css";
+
+const API_BASE = "https://promark-backend.onrender.com"; // Replace with your Render backend if different
 
 function App() {
-  const [campaigns, setCampaigns] = useState([]);
-  const [form, setForm] = useState({ id: '', name: '', status: '' });
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchCampaigns().then(setCampaigns);
-  }, []);
-
-  const handleCreate = async () => {
-    await createCampaign({
-      id: parseInt(form.id),
-      name: form.name,
-      status: form.status
-    });
-    fetchCampaigns().then(setCampaigns);
+  const fetchFeedbacks = async () => {
+    try {
+      const res = await axios.get(`${API_BASE}/feedbacks`);
+      setFeedbacks(res.data.feedbacks || []);
+    } catch (err) {
+      console.error("Error fetching feedbacks:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
+  useEffect(() => {
+    fetchFeedbacks();
+  }, []);
+
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold text-blue-700 mb-4">ProMark Admin Dashboard</h1>
+    <div className="min-h-screen bg-gray-100 p-8">
+      <h1 className="text-3xl font-bold mb-6 text-center text-blue-700">📊 SmartAdX Admin Dashboard</h1>
 
-      <div className="mb-4">
-        <h2 className="font-semibold">Create Campaign</h2>
-        <input placeholder="ID" className="border p-1 mr-2"
-          value={form.id} onChange={e => setForm({ ...form, id: e.target.value })} />
-        <input placeholder="Name" className="border p-1 mr-2"
-          value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
-        <input placeholder="Status" className="border p-1 mr-2"
-          value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} />
-        <button onClick={handleCreate} className="bg-green-500 text-white px-3 py-1 rounded">
-          Create
-        </button>
-      </div>
-
-      <h2 className="font-semibold mb-2">Campaigns</h2>
-      <table className="w-full border mb-4">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="p-2 border">ID</th>
-            <th className="p-2 border">Name</th>
-            <th className="p-2 border">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {campaigns.map(c => (
-            <tr key={c.id}>
-              <td className="p-2 border">{c.id}</td>
-              <td className="p-2 border">{c.name}</td>
-              <td className="p-2 border">{c.status}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <Analytics />
-      <FeedbackChart />
-      <PredictForm />
+      {loading ? (
+        <p className="text-center text-gray-600">Loading feedbacks...</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white shadow-md rounded border border-gray-200">
+            <thead className="bg-blue-600 text-white">
+              <tr>
+                <th className="py-2 px-4">Token</th>
+                <th className="py-2 px-4">Name</th>
+                <th className="py-2 px-4">Transaction</th>
+                <th className="py-2 px-4">Purchased</th>
+                <th className="py-2 px-4">Interests</th>
+                <th className="py-2 px-4">Predicted Ad</th>
+              </tr>
+            </thead>
+            <tbody>
+              {feedbacks.map((fb, index) => (
+                <tr key={index} className="border-b hover:bg-gray-50">
+                  <td className="py-2 px-4">{fb.token}</td>
+                  <td className="py-2 px-4">{fb.name}</td>
+                  <td className="py-2 px-4">{fb.transaction_id}</td>
+                  <td className="py-2 px-4">{fb.purchased_item}</td>
+                  <td className="py-2 px-4">{fb.future_interest.join(", ")}</td>
+                  <td className="py-2 px-4 text-green-600 font-semibold">{fb.predicted_ad}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
