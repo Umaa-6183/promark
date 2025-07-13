@@ -4,7 +4,11 @@
     "slug": "promark-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "platforms": ["android", "ios", "web"],
+    "platforms": [
+      "android",
+      "ios",
+      "web"
+    ],
     "sdkVersion": "50.0.0",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -16,6 +20,16 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"]
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "004cfe9f-613f-4174-bd82-d8f8e591299f"
+      }
+    },
+    "android": {
+      "package": "com.umaa2025.promarkmobile"
+    }
   }
 }
