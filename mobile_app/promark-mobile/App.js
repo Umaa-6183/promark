@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, TextInput, Button, FlatList,
-  StyleSheet, ScrollView, ActivityIndicator, Alert
+  StyleSheet, ActivityIndicator, Alert
 } from 'react-native';
-
-const API_BASE = 'http://192.168.41.65:8000'; // Replace with your local IP
-
+import { API_BASE } from '@env'; // 🔁 .env variable
+console.log("🌐 Backend:", API_BASE);
 export default function App() {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const [form, setForm] = useState({
     name: '',
     phone: '',
@@ -17,7 +15,6 @@ export default function App() {
     purchased_item: '',
     future_interest: ''
   });
-
   const [predictedAd, setPredictedAd] = useState(null);
 
   const fetchCampaigns = async () => {
@@ -27,6 +24,7 @@ export default function App() {
       setCampaigns(data);
     } catch (err) {
       console.error('Error fetching campaigns:', err);
+      Alert.alert('❌ Network error', 'Unable to fetch campaigns');
     } finally {
       setLoading(false);
     }
@@ -71,8 +69,8 @@ export default function App() {
     fetchCampaigns();
   }, []);
 
-  return (
-    <ScrollView contentContainerStyle={styles.container}>
+  const renderHeader = () => (
+    <View style={styles.formContainer}>
       <Text style={styles.title}>📋 SmartAdX Feedback Form</Text>
 
       <TextInput
@@ -81,7 +79,6 @@ export default function App() {
         value={form.name}
         onChangeText={(text) => setForm({ ...form, name: text })}
       />
-
       <TextInput
         placeholder="Phone Number"
         keyboardType="phone-pad"
@@ -89,21 +86,18 @@ export default function App() {
         value={form.phone}
         onChangeText={(text) => setForm({ ...form, phone: text })}
       />
-
       <TextInput
         placeholder="Transaction ID"
         style={styles.input}
         value={form.transaction_id}
         onChangeText={(text) => setForm({ ...form, transaction_id: text })}
       />
-
       <TextInput
         placeholder="Purchased Item"
         style={styles.input}
         value={form.purchased_item}
         onChangeText={(text) => setForm({ ...form, purchased_item: text })}
       />
-
       <TextInput
         placeholder="Future Interest (comma-separated)"
         style={styles.input}
@@ -122,26 +116,39 @@ export default function App() {
       )}
 
       <Text style={styles.subheading}>📣 Campaigns</Text>
-      {loading ? (
+    </View>
+  );
+
+  return (
+    loading ? (
+      <View style={[styles.container, { flex: 1, justifyContent: 'center' }]}>
         <ActivityIndicator size="large" color="#0066cc" />
-      ) : (
-        <FlatList
-          data={campaigns}
-          keyExtractor={(item) => item.id?.toString() ?? Math.random().toString()}
-          renderItem={({ item }) => (
-            <View style={styles.card}>
-              <Text style={styles.campaignTitle}>{item.name}</Text>
-              <Text style={styles.status}>Status: {item.status}</Text>
-            </View>
-          )}
-        />
-      )}
-    </ScrollView>
+      </View>
+    ) : (
+      <FlatList
+        ListHeaderComponent={renderHeader}
+        data={campaigns}
+        keyExtractor={(item) => item.id?.toString() ?? Math.random().toString()}
+        renderItem={({ item }) => (
+          <View style={styles.card}>
+            <Text style={styles.campaignTitle}>{item.name}</Text>
+            <Text style={styles.status}>Status: {item.status}</Text>
+          </View>
+        )}
+        contentContainerStyle={styles.container}
+      />
+    )
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 20, backgroundColor: '#fff' },
+  container: {
+    padding: 20,
+    backgroundColor: '#fff',
+  },
+  formContainer: {
+    marginBottom: 20,
+  },
   title: { fontSize: 22, fontWeight: 'bold', marginBottom: 10 },
   subheading: { fontSize: 18, marginTop: 20, fontWeight: 'bold' },
   input: {
