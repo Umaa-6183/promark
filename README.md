@@ -143,7 +143,7 @@ ACM Survey, "Context-Aware Proactive Systems using ML", ACM Computing Surveys, 2
 FastAPI · React Native · Scikit-learn Official Docs
 
 📌 Authors & Contributors
-🧑‍💻 Karan J Singh – Project Lead
+🧑‍💻 Karan Singh J – Project Lead
 
 🤖 Assisted by Kamal Raj 
 
