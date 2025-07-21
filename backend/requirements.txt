@@ -34,7 +34,6 @@ facenet-pytorch==2.5.3
 fastapi==0.116.1
 fastjsonschema==2.21.1
 fer==22.4.0
-ffmpeg==1.4
 filelock==3.18.0
 fire==0.7.0
 Flask==3.1.1
@@ -101,7 +100,6 @@ matplotlib-inline==0.1.7
 mdurl==0.1.2
 mistune==3.1.3
 ml-dtypes==0.2.0
-moviepy==1.0.3
 mpmath==1.3.0
 msgpack==1.1.0
 mtcnn==0.1.1
@@ -140,7 +138,6 @@ pure_eval==0.2.3
 pyarrow==20.0.0
 pyasn1==0.6.1
 pyasn1_modules==0.4.2
-PyAudio==0.2.14
 pycparser==2.22
 pydantic==2.11.7
 pydantic_core==2.33.2
