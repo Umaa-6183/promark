@@ -1,5 +1,4 @@
 import os
-import sys
 import uuid
 import json
 import pickle
@@ -28,18 +27,34 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ✅ Paths
+BASE_DIR = os.path.dirname(__file__)
+CAMPAIGN_FILE = os.path.join(BASE_DIR, "campaigns.json")
+FEEDBACK_STORE_FILE = os.path.join(BASE_DIR, "feedback_store.json")
+MODEL_DIR = os.path.abspath(os.path.join(BASE_DIR, '..', 'ml_models'))
+LOG_FILE = os.path.abspath(os.path.join(
+    BASE_DIR, '..', 'smart_contracts', 'feedback_chain.json'))
+
+# ✅ Load campaigns from file
+if os.path.exists(CAMPAIGN_FILE):
+    with open(CAMPAIGN_FILE, "r") as f:
+        campaigns = json.load(f)
+else:
+    campaigns = []
+
+# ✅ Load feedbacks from file (if exists)
+if os.path.exists(FEEDBACK_STORE_FILE):
+    with open(FEEDBACK_STORE_FILE, "r") as f:
+        feedback_store = json.load(f)
+else:
+    feedback_store = []
+
 # ✅ Load ML model and encoder
-MODEL_DIR = os.path.abspath(os.path.join(
-    os.path.dirname(__file__), '..', 'ml_models'))
 with open(os.path.join(MODEL_DIR, "ad_predictor.pkl"), "rb") as f:
     ad_model = pickle.load(f)
 
 with open(os.path.join(MODEL_DIR, "ad_encoder.pkl"), "rb") as f:
     ad_encoder = pickle.load(f)
-
-# ✅ In-memory stores
-feedback_store = []
-campaigns = []
 
 # ✅ Pydantic model for feedback form
 
@@ -50,6 +65,8 @@ class FeedbackForm(BaseModel):
     transaction_id: str
     purchased_item: str
     future_interest: list
+
+# ✅ Routes
 
 
 @app.get("/")
@@ -70,7 +87,6 @@ def list_feedbacks():
 @app.post("/feedback")
 def receive_feedback(data: FeedbackForm):
     try:
-        # 🔁 Encode future interest using the encoder
         encoded_input = ad_encoder.transform([data.future_interest])
         prediction = ad_model.predict(encoded_input)[0]
         token = str(uuid.uuid4())
@@ -78,7 +94,6 @@ def receive_feedback(data: FeedbackForm):
         raise HTTPException(
             status_code=500, detail=f"Prediction failed: {str(e)}")
 
-    # ✅ Feedback Entry
     entry = {
         "token": token,
         "name": data.name,
@@ -89,13 +104,16 @@ def receive_feedback(data: FeedbackForm):
         "predicted_ad": prediction
     }
 
+    # ✅ Append to memory
     feedback_store.append(entry)
 
-    # ✅ Log to pseudo blockchain file
-    log_path = os.path.abspath(os.path.join(os.path.dirname(
-        __file__), '..', 'smart_contracts', 'feedback_chain.json'))
-    if os.path.exists(log_path):
-        with open(log_path, "r") as f:
+    # ✅ Save to feedback_store.json
+    with open(FEEDBACK_STORE_FILE, "w") as f:
+        json.dump(feedback_store, f, indent=2)
+
+    # ✅ Log to blockchain-like log file
+    if os.path.exists(LOG_FILE):
+        with open(LOG_FILE, "r") as f:
             logs = json.load(f)
     else:
         logs = []
@@ -106,7 +124,7 @@ def receive_feedback(data: FeedbackForm):
         "timestamp": str(uuid.uuid1().time)
     })
 
-    with open(log_path, "w") as f:
+    with open(LOG_FILE, "w") as f:
         json.dump(logs, f, indent=2)
 
     return {

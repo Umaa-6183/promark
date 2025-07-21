@@ -102,6 +102,7 @@ python -m venv venv
 venv\Scripts\activate   # (or source venv/bin/activate on Mac/Linux)
 pip install -r requirements.txt
 uvicorn main:app --reload
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
 ✅ Web Dashboard
 

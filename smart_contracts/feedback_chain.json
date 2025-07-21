@@ -53,5 +53,10 @@
     "campaign_id": "string",
     "feedback_hash": "50ecd9eba32eb678fd3d1bde486f47bb91848799b258ef95cfd89199caf1d60d",
     "timestamp": "139706113670649954"
+  },
+  {
+    "campaign_id": "TXN12345",
+    "feedback_hash": "c978c970546e41f3aca08a4bbcf29a5354fd34805a002258e4b302e3bc9e163f",
+    "timestamp": "139724192584459047"
   }
 ]
