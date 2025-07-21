@@ -128,7 +128,6 @@ packaging==24.2
 pandas==2.1.1
 pandocfilters==1.5.1
 parso==0.8.4
-pefile==2023.2.7
 pillow==10.3.0
 platformdirs==4.3.8
 pooch==1.8.2
@@ -147,8 +146,6 @@ pydantic==2.11.7
 pydantic_core==2.33.2
 pydeck==0.9.1
 Pygments==2.19.1
-pyinstaller==6.13.0
-pyinstaller-hooks-contrib==2025.4
 pyparsing==3.2.3
 PySocks==1.7.1
 python-dateutil==2.9.0.post0
@@ -156,7 +153,6 @@ python-dotenv==1.0.1
 python-json-logger==3.3.0
 python-multipart==0.0.20
 pytz==2025.2
-pywinpty==2.0.15
 PyYAML==6.0.2
 pyzmq==27.0.0
 referencing==0.36.2
@@ -190,7 +186,6 @@ tensorboard==2.15.2
 tensorboard-data-server==0.7.2
 tensorflow==2.15.0
 tensorflow-estimator==2.15.0
-tensorflow-intel==2.15.0
 tensorflow-io-gcs-filesystem==0.31.0
 termcolor==3.1.0
 terminado==0.18.1
