@@ -3,8 +3,13 @@ import {
   View, Text, TextInput, Button, FlatList,
   StyleSheet, ActivityIndicator, Alert
 } from 'react-native';
-import { API_BASE } from '@env'; // 🔁 .env variable
+import Constants from 'expo-constants';
+
+// ✅ Get API base URL from app.json -> extra.API_BASE
+const API_BASE = Constants.expoConfig.extra.API_BASE;
+
 console.log("🌐 Backend:", API_BASE);
+
 export default function App() {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -131,8 +136,8 @@ export default function App() {
         keyExtractor={(item) => item.id?.toString() ?? Math.random().toString()}
         renderItem={({ item }) => (
           <View style={styles.card}>
-            <Text style={styles.campaignTitle}>{item.name}</Text>
-            <Text style={styles.status}>Status: {item.status}</Text>
+            <Text style={styles.campaignTitle}>{item.title}</Text>
+            <Text style={styles.status}>{item.description}</Text>
           </View>
         )}
         contentContainerStyle={styles.container}

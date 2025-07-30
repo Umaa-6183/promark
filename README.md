@@ -101,7 +101,6 @@ cd backend
 python -m venv venv
 venv\Scripts\activate   # (or source venv/bin/activate on Mac/Linux)
 pip install -r requirements.txt
-uvicorn main:app --reload
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
 ✅ Web Dashboard
@@ -114,7 +113,7 @@ npm start
 
 cd mobile_app/promark-mobile
 npm install
-npx expo start
+npx expo start --lan
 
 Important: Use your local IP in App.js instead of localhost for backend access in Expo app.
 
