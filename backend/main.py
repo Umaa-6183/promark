@@ -8,6 +8,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 import importlib.util
+from database import create_feedback_table, insert_feedback, get_all_feedbacks
 
 # ✅ Dynamic import for blockchain log
 log_chain_path = os.path.abspath(os.path.join(
