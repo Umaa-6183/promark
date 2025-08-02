@@ -13,7 +13,8 @@ export const fetchAnalytics = async () => {
 
 export const fetchFeedbacks = async () => {
   const res = await fetch(`${API_BASE}/feedbacks`);
-  return await res.json();
+  const data = await res.json();
+  return data.feedbacks;
 };
 
 export const predictFeedback = async (payload) => {
