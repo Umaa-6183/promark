@@ -1,8 +1,11 @@
 import sqlite3
+import os
+import json
 
-DB_PATH = "feedback.db"
+BASE_DIR = os.path.dirname(__file__)
+DB_PATH = os.path.join(BASE_DIR, "feedbacks.db")
 
-def init_db():
+def create_feedback_table():
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.cursor()
         cursor.execute("""
@@ -30,22 +33,25 @@ def insert_feedback(entry):
             entry["phone"],
             entry["transaction_id"],
             entry["purchased_item"],
-            ",".join(entry["future_interest"]),
+            json.dumps(entry["future_interest"]),
             entry["predicted_ad"]
         ))
         conn.commit()
 
-def fetch_all_feedbacks():
+def get_all_feedbacks():
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM feedbacks")
         rows = cursor.fetchall()
-        return [{
-            "token": r[0],
-            "name": r[1],
-            "phone": r[2],
-            "transaction_id": r[3],
-            "purchased_item": r[4],
-            "future_interest": r[5].split(","),
-            "predicted_ad": r[6],
-        } for r in rows]
+        return [
+            {
+                "token": row[0],
+                "name": row[1],
+                "phone": row[2],
+                "transaction_id": row[3],
+                "purchased_item": row[4],
+                "future_interest": json.loads(row[5]),
+                "predicted_ad": row[6]
+            }
+            for row in rows
+        ]
