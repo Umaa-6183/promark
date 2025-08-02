@@ -1,4 +1,5 @@
-export const API_BASE = "http://127.0.0.1:8000"; // or use your Render URL
+// Use your Render-deployed backend
+export const API_BASE = "https://promark.onrender.com";
 
 export const fetchCampaigns = async () => {
   const res = await fetch(`${API_BASE}/campaigns`);
