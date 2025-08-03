@@ -1,10 +1,18 @@
+// src/components/Topbar.js
+
 import React from 'react';
+import { Menu } from 'lucide-react';
 import '../styles/Topbar.css';
 
-const Topbar = () => (
-  <div className="topbar">
-    <h3>📊 SmartAdX Admin Dashboard</h3>
-  </div>
-);
+const Topbar = ({ onMenuClick }) => {
+  return (
+    <div className="topbar">
+      <div className="menu-icon" onClick={onMenuClick}>
+        <Menu size={24} />
+      </div>
+      <div className="topbar-title">SmartAdX Dashboard</div>
+    </div>
+  );
+};
 
 export default Topbar;

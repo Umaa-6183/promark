@@ -1,8 +1,7 @@
 // src/pages/FeedbackLog.js
 
 import React, { useEffect, useState } from 'react';
-import './FeedbackLog.css';
-
+import '../styles/FeedbackLog.css';
 const FeedbackLog = () => {
   const [feedbacks, setFeedbacks] = useState([]);
 

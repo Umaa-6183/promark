@@ -1,26 +1,25 @@
+/* src/components/Topbar.css */
+
 .topbar {
-  height: 60px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 0 24px;
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
+  background-color: #1e1e2f;
+  color: white;
+  padding: 16px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 900;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
-.topbar .profile {
+.menu-icon {
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 12px;
 }
 
-.topbar .profile img {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-}
-
-.topbar .profile span {
-  font-weight: 600;
-  color: #333;
+.topbar-title {
+  font-size: 18px;
+  font-weight: bold;
 }
