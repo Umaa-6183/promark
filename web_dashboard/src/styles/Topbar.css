@@ -1,0 +1,26 @@
+.topbar {
+  height: 60px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.topbar .profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topbar .profile img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.topbar .profile span {
+  font-weight: 600;
+  color: #333;
+}

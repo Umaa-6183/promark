@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import {
-  View, Text, TextInput, Button, FlatList,
-  StyleSheet, ActivityIndicator, Alert
+  View, Text, TextInput, Button, ScrollView, StyleSheet,
+  ActivityIndicator, Alert, SafeAreaView
 } from 'react-native';
 import Constants from 'expo-constants';
+import RewardModal from './components/RewardModal';
+import CampaignCarousel from './components/CampaignCarousel';
 
-// ✅ Get API base URL from app.json -> extra.API_BASE
 const API_BASE = Constants.expoConfig.extra.API_BASE;
-
-console.log("🌐 Backend:", API_BASE);
 
 export default function App() {
   const [campaigns, setCampaigns] = useState([]);
@@ -21,6 +20,7 @@ export default function App() {
     future_interest: ''
   });
   const [predictedAd, setPredictedAd] = useState(null);
+  const [showReward, setShowReward] = useState(false);
 
   const fetchCampaigns = async () => {
     try {
@@ -57,8 +57,11 @@ export default function App() {
       const result = await res.json();
 
       if (res.ok) {
-        setPredictedAd(result.predicted_ad);
-        Alert.alert('✅ Feedback Submitted', `📢 Predicted Ad: ${result.predicted_ad}`);
+        setPredictedAd({
+          title: result.predicted_ad,
+          image: result.ad_image || 'https://via.placeholder.com/200x100.png?text=Ad' // fallback
+        });
+        setShowReward(true);
       } else {
         console.error('Prediction error:', result);
         Alert.alert('Error', result.detail || 'Something went wrong');
@@ -74,112 +77,92 @@ export default function App() {
     fetchCampaigns();
   }, []);
 
-  const renderHeader = () => (
-    <View style={styles.formContainer}>
-      <Text style={styles.title}>📋 SmartAdX Feedback Form</Text>
-
-      <TextInput
-        placeholder="Your Name"
-        style={styles.input}
-        value={form.name}
-        onChangeText={(text) => setForm({ ...form, name: text })}
-      />
-      <TextInput
-        placeholder="Phone Number"
-        keyboardType="phone-pad"
-        style={styles.input}
-        value={form.phone}
-        onChangeText={(text) => setForm({ ...form, phone: text })}
-      />
-      <TextInput
-        placeholder="Transaction ID"
-        style={styles.input}
-        value={form.transaction_id}
-        onChangeText={(text) => setForm({ ...form, transaction_id: text })}
-      />
-      <TextInput
-        placeholder="Purchased Item"
-        style={styles.input}
-        value={form.purchased_item}
-        onChangeText={(text) => setForm({ ...form, purchased_item: text })}
-      />
-      <TextInput
-        placeholder="Future Interest (comma-separated)"
-        style={styles.input}
-        value={form.future_interest}
-        onChangeText={(text) => setForm({ ...form, future_interest: text })}
-      />
-
-      <View style={{ marginTop: 10 }}>
-        <Button title="🚀 Submit Feedback" onPress={submitFeedback} />
-      </View>
-
-      {predictedAd && (
-        <View style={styles.result}>
-          <Text style={styles.prediction}>📢 Predicted Ad: {predictedAd}</Text>
+  return (
+    <SafeAreaView style={styles.safe}>
+      {loading ? (
+        <View style={[styles.container, { flex: 1, justifyContent: 'center' }]}>
+          <ActivityIndicator size="large" color="#0066cc" />
         </View>
+      ) : (
+        <ScrollView contentContainerStyle={styles.container}>
+          <Text style={styles.title}>📋 SmartAdX Feedback</Text>
+
+          <TextInput
+            placeholder="Your Name"
+            style={styles.input}
+            value={form.name}
+            onChangeText={(text) => setForm({ ...form, name: text })}
+          />
+          <TextInput
+            placeholder="Phone Number"
+            keyboardType="phone-pad"
+            style={styles.input}
+            value={form.phone}
+            onChangeText={(text) => setForm({ ...form, phone: text })}
+          />
+          <TextInput
+            placeholder="Transaction ID"
+            style={styles.input}
+            value={form.transaction_id}
+            onChangeText={(text) => setForm({ ...form, transaction_id: text })}
+          />
+          <TextInput
+            placeholder="Purchased Item"
+            style={styles.input}
+            value={form.purchased_item}
+            onChangeText={(text) => setForm({ ...form, purchased_item: text })}
+          />
+          <TextInput
+            placeholder="Future Interest (comma-separated)"
+            style={styles.input}
+            value={form.future_interest}
+            onChangeText={(text) => setForm({ ...form, future_interest: text })}
+          />
+
+          <View style={{ marginTop: 10 }}>
+            <Button title="🚀 Submit Feedback" onPress={submitFeedback} />
+          </View>
+
+          <Text style={styles.subheading}>🔥 Active Campaigns</Text>
+
+          <CampaignCarousel campaigns={campaigns} />
+
+        </ScrollView>
       )}
 
-      <Text style={styles.subheading}>📣 Campaigns</Text>
-    </View>
-  );
-
-  return (
-    loading ? (
-      <View style={[styles.container, { flex: 1, justifyContent: 'center' }]}>
-        <ActivityIndicator size="large" color="#0066cc" />
-      </View>
-    ) : (
-      <FlatList
-        ListHeaderComponent={renderHeader}
-        data={campaigns}
-        keyExtractor={(item) => item.id?.toString() ?? Math.random().toString()}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Text style={styles.campaignTitle}>{item.title}</Text>
-            <Text style={styles.status}>{item.description}</Text>
-          </View>
-        )}
-        contentContainerStyle={styles.container}
+      {/* 🎁 Reward Pop-up */}
+      <RewardModal
+        visible={showReward}
+        onClose={() => setShowReward(false)}
+        ad={predictedAd}
       />
-    )
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safe: {
+    flex: 1,
+    backgroundColor: '#fff'
+  },
   container: {
-    padding: 20,
-    backgroundColor: '#fff',
+    padding: 20
   },
-  formContainer: {
-    marginBottom: 20,
+  title: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 10
   },
-  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 10 },
-  subheading: { fontSize: 18, marginTop: 20, fontWeight: 'bold' },
+  subheading: {
+    fontSize: 18,
+    marginTop: 20,
+    fontWeight: 'bold'
+  },
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
     padding: 10,
     marginVertical: 6,
     borderRadius: 5
-  },
-  result: {
-    marginVertical: 12,
-    padding: 10,
-    backgroundColor: '#e3f7e3',
-    borderRadius: 6
-  },
-  prediction: {
-    fontSize: 16,
-    color: 'green',
-    fontWeight: 'bold'
-  },
-  card: {
-    marginTop: 10,
-    padding: 10,
-    backgroundColor: '#f2f2f2',
-    borderRadius: 6
-  },
-  campaignTitle: { fontSize: 16, fontWeight: 'bold' },
-  status: { fontSize: 14, color: '#666' },
+  }
 });

@@ -3,12 +3,12 @@
     "id": "cmp001",
     "title": "Monsoon Mega Sale",
     "description": "Flat 40% off on smart TVs!",
-    "image_url": "https://via.placeholder.com/150"
+    "image_url": "https://via.placeholder.com/300x150.png?text=Smart+TV+Sale"
   },
   {
     "id": "cmp002",
     "title": "Smartphone Carnival",
     "description": "Buy 1 Get 1 Free on select models.",
-    "image_url": "https://via.placeholder.com/150"
+    "image_url": "https://via.placeholder.com/300x150.png?text=Smartphone+Carnival"
   }
 ]
