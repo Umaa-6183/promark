@@ -27,19 +27,18 @@ export default function App() {
       const res = await fetch(`${API_BASE}/campaigns`);
       const data = await res.json();
       setCampaigns(data);
-    } catch (err) {
-      console.error('Error fetching campaigns:', err);
-      Alert.alert('❌ Network error', 'Unable to fetch campaigns');
+    } catch (error) {
+      console.error('❌ Error fetching campaigns:', error.message);
+      Alert.alert('Network error', 'Unable to fetch campaigns');
     } finally {
       setLoading(false);
     }
   };
 
   const submitFeedback = async () => {
-    if (
-      !form.name || !form.phone || !form.transaction_id ||
-      !form.purchased_item || !form.future_interest
-    ) {
+    const { name, phone, transaction_id, purchased_item, future_interest } = form;
+
+    if (!name || !phone || !transaction_id || !purchased_item || !future_interest) {
       Alert.alert('All fields are required');
       return;
     }
@@ -50,7 +49,7 @@ export default function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
-          future_interest: form.future_interest.split(',').map(item => item.trim())
+          future_interest: future_interest.split(',').map(s => s.trim()),
         }),
       });
 
@@ -59,16 +58,15 @@ export default function App() {
       if (res.ok) {
         setPredictedAd({
           title: result.predicted_ad,
-          image: result.ad_image || 'https://via.placeholder.com/200x100.png?text=Ad' // fallback
+          image: result.ad_image || 'https://via.placeholder.com/200x100.png?text=Ad',
         });
         setShowReward(true);
       } else {
         console.error('Prediction error:', result);
         Alert.alert('Error', result.detail || 'Something went wrong');
       }
-
     } catch (error) {
-      console.error('Submit error:', error);
+      console.error('Submit error:', error.message);
       Alert.alert('Network error');
     }
   };
@@ -80,62 +78,34 @@ export default function App() {
   return (
     <SafeAreaView style={styles.safe}>
       {loading ? (
-        <View style={[styles.container, { flex: 1, justifyContent: 'center' }]}>
+        <View style={styles.loader}>
           <ActivityIndicator size="large" color="#0066cc" />
         </View>
       ) : (
         <ScrollView contentContainerStyle={styles.container}>
           <Text style={styles.title}>📋 SmartAdX Feedback</Text>
 
-          <TextInput
-            placeholder="Your Name"
-            style={styles.input}
-            value={form.name}
-            onChangeText={(text) => setForm({ ...form, name: text })}
-          />
-          <TextInput
-            placeholder="Phone Number"
-            keyboardType="phone-pad"
-            style={styles.input}
-            value={form.phone}
-            onChangeText={(text) => setForm({ ...form, phone: text })}
-          />
-          <TextInput
-            placeholder="Transaction ID"
-            style={styles.input}
-            value={form.transaction_id}
-            onChangeText={(text) => setForm({ ...form, transaction_id: text })}
-          />
-          <TextInput
-            placeholder="Purchased Item"
-            style={styles.input}
-            value={form.purchased_item}
-            onChangeText={(text) => setForm({ ...form, purchased_item: text })}
-          />
-          <TextInput
-            placeholder="Future Interest (comma-separated)"
-            style={styles.input}
-            value={form.future_interest}
-            onChangeText={(text) => setForm({ ...form, future_interest: text })}
-          />
+          <TextInput style={styles.input} placeholder="Your Name" value={form.name}
+            onChangeText={(text) => setForm({ ...form, name: text })} />
+          <TextInput style={styles.input} placeholder="Phone Number" keyboardType="phone-pad"
+            value={form.phone} onChangeText={(text) => setForm({ ...form, phone: text })} />
+          <TextInput style={styles.input} placeholder="Transaction ID" value={form.transaction_id}
+            onChangeText={(text) => setForm({ ...form, transaction_id: text })} />
+          <TextInput style={styles.input} placeholder="Purchased Item" value={form.purchased_item}
+            onChangeText={(text) => setForm({ ...form, purchased_item: text })} />
+          <TextInput style={styles.input} placeholder="Future Interest (comma-separated)"
+            value={form.future_interest} onChangeText={(text) => setForm({ ...form, future_interest: text })} />
 
           <View style={{ marginTop: 10 }}>
             <Button title="🚀 Submit Feedback" onPress={submitFeedback} />
           </View>
 
           <Text style={styles.subheading}>🔥 Active Campaigns</Text>
-
           <CampaignCarousel campaigns={campaigns} />
-
         </ScrollView>
       )}
 
-      {/* 🎁 Reward Pop-up */}
-      <RewardModal
-        visible={showReward}
-        onClose={() => setShowReward(false)}
-        ad={predictedAd}
-      />
+      <RewardModal visible={showReward} onClose={() => setShowReward(false)} ad={predictedAd} />
     </SafeAreaView>
   );
 }
@@ -143,26 +113,30 @@ export default function App() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   container: {
-    padding: 20
+    padding: 20,
+  },
+  loader: {
+    flex: 1,
+    justifyContent: 'center',
   },
   title: {
     fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 10
+    marginBottom: 10,
   },
   subheading: {
     fontSize: 18,
     marginTop: 20,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
     padding: 10,
     marginVertical: 6,
-    borderRadius: 5
-  }
+    borderRadius: 5,
+  },
 });

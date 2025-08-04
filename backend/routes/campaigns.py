@@ -1,15 +1,13 @@
-# backend/routes/campaigns.py
-
 from fastapi import APIRouter
-import json
-import os
+import sqlite3
 
 router = APIRouter()
 
 @router.get("/campaigns")
 def get_campaigns():
-    # Adjust path to correctly point to campaigns.json
-    json_path = os.path.join(os.path.dirname(__file__), "../campaigns.json")
-    with open(json_path, "r") as f:
-        campaigns = json.load(f)
-    return campaigns
+    conn = sqlite3.connect("promark.db")
+    c = conn.cursor()
+    c.execute("SELECT id, title, description, image_url FROM campaigns")
+    rows = c.fetchall()
+    conn.close()
+    return [{"id": row[0], "title": row[1], "description": row[2], "image_url": row[3]} for row in rows]

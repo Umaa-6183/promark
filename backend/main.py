@@ -6,6 +6,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 import importlib.util
+from routes import campaigns
 
 # ✅ Import SQLite database utilities
 from database import create_feedback_table, insert_feedback, get_all_feedbacks
@@ -13,6 +14,7 @@ from database import create_feedback_table, insert_feedback, get_all_feedbacks
 # ✅ Initialize FastAPI
 app = FastAPI(title="SmartAdX API")
 
+app.include_router(campaigns.router)
 # ✅ Enable CORS for frontend/mobile access
 app.add_middleware(
     CORSMiddleware,

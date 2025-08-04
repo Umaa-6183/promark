@@ -1,14 +1,38 @@
 [
   {
-    "id": "cmp001",
-    "title": "Monsoon Mega Sale",
-    "description": "Flat 40% off on smart TVs!",
-    "image_url": "https://via.placeholder.com/300x150.png?text=Smart+TV+Sale"
+    "id": 1,
+    "title": "50% Off Pizza",
+    "description": "Enjoy half price on all large pizzas this weekend.",
+    "image_url": "https://via.placeholder.com/400x200.png?text=50%25+Off+Pizza"
   },
   {
-    "id": "cmp002",
-    "title": "Smartphone Carnival",
-    "description": "Buy 1 Get 1 Free on select models.",
-    "image_url": "https://via.placeholder.com/300x150.png?text=Smartphone+Carnival"
+    "id": 2,
+    "title": "BOGO T-Shirts",
+    "description": "Buy one get one free on all T-shirts!",
+    "image_url": "https://via.placeholder.com/400x200.png?text=BOGO+T-Shirts"
+  },
+  {
+    "id": 3,
+    "title": "₹100 Cashback",
+    "description": "Get ₹100 cashback on orders above ₹500.",
+    "image_url": "https://via.placeholder.com/400x200.png?text=100+Cashback"
+  },
+  {
+    "id": 4,
+    "title": "Free Delivery Week",
+    "description": "No delivery charges for the entire week.",
+    "image_url": "https://via.placeholder.com/400x200.png?text=Free+Delivery"
+  },
+  {
+    "id": 5,
+    "title": "30% Off Electronics",
+    "description": "Exclusive offer on all electronics, limited time!",
+    "image_url": "https://via.placeholder.com/400x200.png?text=30%25+Off+Electronics"
+  },
+  {
+    "id": 6,
+    "title": "Combo Deals",
+    "description": "Exciting combo meals starting at ₹199.",
+    "image_url": "https://via.placeholder.com/400x200.png?text=Combo+Meals"
   }
 ]

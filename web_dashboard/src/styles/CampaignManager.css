@@ -1,0 +1,58 @@
+.campaign-manager {
+  padding: 20px;
+}
+
+.add-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  font-size: 14px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  cursor: pointer;
+}
+
+.campaign-form {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.campaign-form input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.campaign-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.campaign-table th,
+.campaign-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.campaign-table th {
+  background-color: #f8f9fa;
+  font-weight: bold;
+}
+
+.campaign-table img {
+  border-radius: 4px;
+}
+
+.delete-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
