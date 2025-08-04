@@ -1,47 +1,48 @@
 import React from 'react';
-import { Modal, View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { Modal, View, Text, Button, StyleSheet } from 'react-native';
 
-const RewardModal = ({ visible, onClose, ad }) => {
+export default function RewardModal({ visible, onClose }) {
   return (
-    <Modal visible={visible} animationType="fade" transparent>
+    <Modal visible={visible} animationType="slide" transparent>
       <View style={styles.overlay}>
-        <View style={styles.modalContent}>
-          <Text style={styles.title}>🎉 You've Earned Rewards!</Text>
-          <Text style={styles.points}>+50 Points</Text>
-          <Text style={styles.adText}>Special Offer for: <Text style={{ fontWeight: 'bold' }}>{ad}</Text></Text>
-
-          <Image
-            source={{ uri: `https://via.placeholder.com/300x150.png?text=${encodeURIComponent(ad)}` }}
-            style={styles.adImage}
-          />
-
-          <TouchableOpacity style={styles.button} onPress={onClose}>
-            <Text style={styles.buttonText}>Awesome!</Text>
-          </TouchableOpacity>
+        <View style={styles.modal}>
+          <Text style={styles.title}>🎉 Thank You!</Text>
+          <Text style={styles.text}>You've earned 50 SmartPoints</Text>
+          <Text style={styles.text}>Use code <Text style={styles.code}>SMART50</Text> for 10% OFF</Text>
+          <Button title="Close" onPress={onClose} color="#2196F3" />
         </View>
       </View>
     </Modal>
   );
-};
-
-export default RewardModal;
+}
 
 const styles = StyleSheet.create({
   overlay: {
-    flex: 1, justifyContent: 'center', alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)'
+    flex: 1,
+    backgroundColor: '#000000aa',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  modalContent: {
-    backgroundColor: '#fff', padding: 25,
-    borderRadius: 10, width: '85%', alignItems: 'center'
+  modal: {
+    width: '85%',
+    backgroundColor: '#fff',
+    padding: 25,
+    borderRadius: 12,
+    alignItems: 'center',
+    elevation: 5,
   },
-  title: { fontSize: 20, fontWeight: 'bold', marginBottom: 10 },
-  points: { fontSize: 18, color: '#28a745', fontWeight: 'bold', marginBottom: 10 },
-  adText: { fontSize: 16, marginBottom: 10, textAlign: 'center' },
-  adImage: { width: '100%', height: 120, borderRadius: 8, marginBottom: 15 },
-  button: {
-    backgroundColor: '#007bff', paddingVertical: 10,
-    paddingHorizontal: 25, borderRadius: 6
+  title: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 12,
   },
-  buttonText: { color: '#fff', fontWeight: 'bold' }
+  text: {
+    fontSize: 16,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  code: {
+    fontWeight: 'bold',
+    color: '#e91e63',
+  },
 });
