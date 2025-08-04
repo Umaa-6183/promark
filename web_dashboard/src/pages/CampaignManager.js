@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './CampaignManager.css';
+import '../styles/CampaignManager.css';
 
 const CampaignManager = () => {
   const [campaigns, setCampaigns] = useState([
