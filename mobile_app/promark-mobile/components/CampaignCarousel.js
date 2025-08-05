@@ -6,20 +6,19 @@ const { width } = Dimensions.get('window');
 const CampaignCarousel = ({ campaigns }) => {
   const scrollRef = useRef(null);
   let scrollX = 0;
-  let direction = 1;
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (scrollRef.current) {
-        scrollX += direction * width * 0.8;
+      if (scrollRef.current && campaigns.length > 0) {
+        scrollX += width * 0.85;
 
-        if (scrollX >= campaigns.length * (width * 0.8)) {
-          scrollX = 0; // reset scroll
+        if (scrollX >= campaigns.length * width * 0.85) {
+          scrollX = 0;
         }
 
         scrollRef.current.scrollTo({ x: scrollX, animated: true });
       }
-    }, 3000); // every 3 seconds
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [campaigns]);
@@ -28,7 +27,6 @@ const CampaignCarousel = ({ campaigns }) => {
     <ScrollView
       ref={scrollRef}
       horizontal
-      pagingEnabled={false}
       showsHorizontalScrollIndicator={false}
       style={styles.carousel}
     >
@@ -48,25 +46,27 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   card: {
-    width: width * 0.8,
-    marginHorizontal: 10,
+    width: width * 0.85,
+    marginRight: 15,
     backgroundColor: '#fff',
     borderRadius: 10,
-    padding: 15,
-    elevation: 3,
+    padding: 10,
+    elevation: 2,
   },
   image: {
-    height: 120,
-    borderRadius: 8,
-    marginBottom: 10,
+    width: '100%',
+    height: 150,
+    borderRadius: 10,
+    resizeMode: 'cover',
   },
   title: {
-    fontWeight: 'bold',
     fontSize: 16,
+    fontWeight: '600',
+    marginTop: 10,
   },
   description: {
-    color: '#666',
-    fontSize: 13,
+    fontSize: 14,
+    color: '#555',
   },
 });
 

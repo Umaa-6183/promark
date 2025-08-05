@@ -1,38 +1,38 @@
 [
   {
     "id": 1,
-    "title": "50% Off Pizza",
-    "description": "Enjoy half price on all large pizzas this weekend.",
-    "image_url": "https://via.placeholder.com/400x200.png?text=50%25+Off+Pizza"
+    "title": "Laptop Bonanza",
+    "description": "Flat ₹10,000 off on selected laptops.",
+    "image_url": "https://dummyimage.com/400x200/000/fff&text=Laptop+Bonanza"
   },
   {
     "id": 2,
-    "title": "BOGO T-Shirts",
-    "description": "Buy one get one free on all T-shirts!",
-    "image_url": "https://via.placeholder.com/400x200.png?text=BOGO+T-Shirts"
+    "title": "Smartphone Fest",
+    "description": "Up to 40% off on Android and iOS smartphones.",
+    "image_url": "https://dummyimage.com/400x200/333/fff&text=Smartphone+Fest"
   },
   {
     "id": 3,
-    "title": "₹100 Cashback",
-    "description": "Get ₹100 cashback on orders above ₹500.",
-    "image_url": "https://via.placeholder.com/400x200.png?text=100+Cashback"
+    "title": "Smart TV Carnival",
+    "description": "Big screen TVs at unbelievable prices!",
+    "image_url": "https://dummyimage.com/400x200/555/fff&text=Smart+TV+Carnival"
   },
   {
     "id": 4,
-    "title": "Free Delivery Week",
-    "description": "No delivery charges for the entire week.",
-    "image_url": "https://via.placeholder.com/400x200.png?text=Free+Delivery"
+    "title": "Gadget Week",
+    "description": "Smartwatches, earbuds, and more starting at ₹999.",
+    "image_url": "https://dummyimage.com/400x200/777/fff&text=Gadget+Week"
   },
   {
     "id": 5,
-    "title": "30% Off Electronics",
-    "description": "Exclusive offer on all electronics, limited time!",
-    "image_url": "https://via.placeholder.com/400x200.png?text=30%25+Off+Electronics"
+    "title": "Camera Clearance",
+    "description": "Up to 50% off on DSLR and mirrorless cameras.",
+    "image_url": "https://dummyimage.com/400x200/999/fff&text=Camera+Clearance"
   },
   {
     "id": 6,
-    "title": "Combo Deals",
-    "description": "Exciting combo meals starting at ₹199.",
-    "image_url": "https://via.placeholder.com/400x200.png?text=Combo+Meals"
+    "title": "Gaming Gear Sale",
+    "description": "Top brands of gaming accessories at lowest prices.",
+    "image_url": "https://dummyimage.com/400x200/222/fff&text=Gaming+Gear+Sale"
   }
 ]

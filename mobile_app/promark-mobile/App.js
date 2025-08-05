@@ -1,151 +1,119 @@
+// mobile_app/promark-mobile/App.js
+
 import React, { useState, useEffect } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  Alert,
-  ScrollView,
-  StyleSheet,
-  StatusBar,
+  View, Text, TextInput, Button, ScrollView,
+  StyleSheet, ActivityIndicator, Alert, SafeAreaView
 } from 'react-native';
-import RewardModal from './components/RewardModal';
+import Constants from 'expo-constants';
 import CampaignCarousel from './components/CampaignCarousel';
+import RewardModal from './components/RewardModal';
+
+const API_BASE = Constants.expoConfig.extra.API_BASE;
 
 export default function App() {
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [transactionId, setTransactionId] = useState('');
-  const [purchasedItem, setPurchasedItem] = useState('');
-  const [futureInterest, setFutureInterest] = useState('');
-  const [showRewardModal, setShowRewardModal] = useState(false);
+  const [form, setForm] = useState({
+    name: '', phone: '', transaction_id: '', purchased_item: '', future_interest: ''
+  });
   const [campaigns, setCampaigns] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [predictedAd, setPredictedAd] = useState(null);
+  const [showReward, setShowReward] = useState(false);
 
-  // Fetch campaigns from backend
+  const fetchCampaigns = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/campaigns`);
+      const data = await res.json();
+      setCampaigns(data);
+    } catch (error) {
+      console.log("❌ Campaign Fetch Error:", error.message);
+      Alert.alert('Network Error', 'Could not fetch campaigns');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async () => {
+    const empty = Object.values(form).some(f => !f.trim());
+    if (empty) return Alert.alert("Please fill out all fields");
+
+    try {
+      const res = await fetch(`${API_BASE}/feedback`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...form,
+          future_interest: form.future_interest.split(',').map(i => i.trim())
+        })
+      });
+
+      const result = await res.json();
+
+      if (res.ok) {
+        setPredictedAd({
+          title: result.predicted_ad,
+          image: 'https://via.placeholder.com/300x150.png?text=' + encodeURIComponent(result.predicted_ad)
+        });
+        setShowReward(true);
+      } else {
+        Alert.alert('Error', result.detail || 'Something went wrong');
+      }
+    } catch (error) {
+      console.log("❌ Feedback Submit Error:", error.message);
+      Alert.alert("Network Error", "Could not submit feedback");
+    }
+  };
+
   useEffect(() => {
     fetchCampaigns();
   }, []);
 
-  const fetchCampaigns = async () => {
-    try {
-      const res = await fetch('https://promark.onrender.com/campaigns');
-      const data = await res.json();
-      setCampaigns(data);
-    } catch (error) {
-      console.error('Error fetching campaigns:', error.message);
-      Alert.alert('Error', 'Unable to load campaigns');
-    }
-  };
-
-  // Handle form submission
-  const handleSubmit = async () => {
-    if (!name || !phone || !transactionId || !purchasedItem || !futureInterest) {
-      Alert.alert('Missing Fields', 'Please fill all the fields');
-      return;
-    }
-
-    try {
-      const response = await fetch('https://promark.onrender.com/feedback', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name,
-          phone,
-          transactionId,
-          purchasedItem,
-          futureInterest,
-        }),
-      });
-
-      if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.message || 'Submission failed');
-      }
-
-      const data = await response.json();
-      console.log('✅ Feedback submitted:', data);
-      setShowRewardModal(true);
-    } catch (error) {
-      console.log('❌ Submission error:', error.message);
-      Alert.alert('Network Error', error.message);
-    }
-  };
-
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <StatusBar barStyle="dark-content" />
-      <Text style={styles.heading}>📝 SmartAdX Feedback</Text>
+    <SafeAreaView style={styles.safe}>
+      {loading ? (
+        <View style={[styles.container, { flex: 1, justifyContent: 'center' }]}>
+          <ActivityIndicator size="large" color="#0066cc" />
+        </View>
+      ) : (
+        <ScrollView contentContainerStyle={styles.container}>
+          <Text style={styles.title}>📋 SmartAdX Feedback</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Your Name"
-        value={name}
-        onChangeText={setName}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Phone Number"
-        keyboardType="numeric"
-        value={phone}
-        onChangeText={setPhone}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Transaction ID"
-        value={transactionId}
-        onChangeText={setTransactionId}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Purchased Item"
-        value={purchasedItem}
-        onChangeText={setPurchasedItem}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Future Interest (comma-separated)"
-        value={futureInterest}
-        onChangeText={setFutureInterest}
-      />
+          <TextInput style={styles.input} placeholder="Your Name"
+            value={form.name} onChangeText={text => setForm({ ...form, name: text })} />
+          <TextInput style={styles.input} placeholder="Phone Number"
+            value={form.phone} onChangeText={text => setForm({ ...form, phone: text })} />
+          <TextInput style={styles.input} placeholder="Transaction ID"
+            value={form.transaction_id} onChangeText={text => setForm({ ...form, transaction_id: text })} />
+          <TextInput style={styles.input} placeholder="Purchased Item"
+            value={form.purchased_item} onChangeText={text => setForm({ ...form, purchased_item: text })} />
+          <TextInput style={styles.input} placeholder="Future Interest (comma-separated)"
+            value={form.future_interest} onChangeText={text => setForm({ ...form, future_interest: text })} />
 
-      <View style={styles.button}>
-        <Button title="🚀 SUBMIT FEEDBACK" onPress={handleSubmit} color="#2196F3" />
-      </View>
+          <View style={{ marginTop: 10 }}>
+            <Button title="🚀 Submit Feedback" onPress={handleSubmit} />
+          </View>
 
-      <Text style={styles.sectionTitle}>🔥 Active Campaigns</Text>
-      <CampaignCarousel campaigns={campaigns} />
+          <Text style={styles.subheading}>🔥 Active Campaigns</Text>
+          <CampaignCarousel campaigns={campaigns} />
+        </ScrollView>
+      )}
 
-      <RewardModal visible={showRewardModal} onClose={() => setShowRewardModal(false)} />
-    </ScrollView>
+      <RewardModal
+        visible={showReward}
+        ad={predictedAd}
+        onClose={() => setShowReward(false)}
+      />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    paddingBottom: 40,
-    backgroundColor: '#fff',
-    flexGrow: 1,
-  },
-  heading: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 15,
-  },
+  safe: { flex: 1, backgroundColor: '#fff' },
+  container: { padding: 20 },
+  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 10 },
+  subheading: { fontSize: 18, marginTop: 20, fontWeight: 'bold' },
   input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 12,
-  },
-  button: {
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
+    borderWidth: 1, borderColor: '#ccc', padding: 10,
+    marginVertical: 6, borderRadius: 5
+  }
 });
