@@ -1,44 +1,51 @@
 // src/pages/FeedbackLog.js
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import '../styles/FeedbackLog.css';
-const FeedbackLog = () => {
+function FeedbackLog () {
   const [feedbacks, setFeedbacks] = useState([]);
 
   useEffect(() => {
-    fetch('/api/feedbacks')
+    fetch("http://localhost:8000/feedbacks")
       .then((res) => res.json())
-      .then((data) => setFeedbacks(data))
-      .catch((err) => console.error('Error fetching feedbacks:', err));
+      .then((data) =>  {
+        console.log("Fetched feedbacks:", data.feedbacks);
+        setFeedbacks(data.feedbacks);
+      })
+      .catch((err) => console.error("Error fetching feedbacks:", err));
   }, []);
 
   return (
     <div className="feedback-log">
-      <h2 className="page-title">Feedback Log</h2>
-      <div className="feedback-table-wrapper">
-        <table className="feedback-table">
-          <thead>
-            <tr>
-              <th>User</th>
-              <th>Campaign</th>
-              <th>Rating</th>
-              <th>Comment</th>
+      <h2>Feedback Log</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Transaction ID</th>
+            <th>Purchased Item</th>
+            <th>Future Interests</th>
+            <th>Predicted Ad</th>
+            <th>Token</th>
+          </tr>
+        </thead>
+        <tbody>
+          {feedbacks.map((fb) => (
+            <tr key={fb.token}>
+              <td>{fb.name}</td>
+              <td>{fb.phone}</td>
+              <td>{fb.transaction_id}</td>
+              <td>{fb.purchased_item}</td>
+              <td>{fb.future_interest.join(", ")}</td>
+              <td>{fb.predicted_ad}</td>
+              <td>{fb.token}</td>
             </tr>
-          </thead>
-          <tbody>
-            {feedbacks.map((f) => (
-              <tr key={f.id}>
-                <td>{f.user}</td>
-                <td>{f.campaign}</td>
-                <td>{f.rating}</td>
-                <td>{f.comment}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
-};
+}
 
 export default FeedbackLog;
