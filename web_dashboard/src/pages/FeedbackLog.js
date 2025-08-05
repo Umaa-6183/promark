@@ -27,19 +27,17 @@ function FeedbackLog () {
             <th>Purchased Item</th>
             <th>Future Interests</th>
             <th>Predicted Ad</th>
-            <th>Token</th>
           </tr>
         </thead>
         <tbody>
-          {feedbacks.map((fb) => (
-            <tr key={fb.token}>
-              <td>{fb.name}</td>
-              <td>{fb.phone}</td>
-              <td>{fb.transaction_id}</td>
-              <td>{fb.purchased_item}</td>
-              <td>{fb.future_interest.join(", ")}</td>
-              <td>{fb.predicted_ad}</td>
-              <td>{fb.token}</td>
+          {feedbacks.map((feedback , index) => (
+            <tr key={index}>
+              <td>{feedback.name}</td>
+              <td>{feedback.phone}</td>
+              <td>{feedback.transaction_id}</td>
+              <td>{feedback.purchased_item}</td>
+              <td>{feedback.future_interest.join(", ")}</td>
+              <td>{feedback.predicted_ad}</td>
             </tr>
           ))}
         </tbody>
