@@ -6,7 +6,7 @@ function FeedbackLog () {
   const [feedbacks, setFeedbacks] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8000/feedbacks")
+    fetch("https://promark.onrender.com/feedbacks")
       .then((res) => res.json())
       .then((data) =>  {
         console.log("Fetched feedbacks:", data.feedbacks);
