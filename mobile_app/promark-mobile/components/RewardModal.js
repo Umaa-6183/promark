@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, View, Text, Button, StyleSheet } from 'react-native';
 
-export default function RewardModal({ visible, onClose }) {
+export default function RewardModal({ visible, onClose, predictedAd }) {
   return (
     <Modal visible={visible} animationType="slide" transparent>
       <View style={styles.overlay}>
@@ -9,6 +9,14 @@ export default function RewardModal({ visible, onClose }) {
           <Text style={styles.title}>🎉 Thank You!</Text>
           <Text style={styles.text}>You've earned 50 SmartPoints</Text>
           <Text style={styles.text}>Use code <Text style={styles.code}>SMART50</Text> for 10% OFF</Text>
+
+          {/* 🔥 Personalized Prediction Message */}
+          {predictedAd && (
+            <Text style={styles.prediction}>
+              🎯 Personalized Ad Recommendation: {predictedAd}
+            </Text>
+          )}
+
           <Button title="Close" onPress={onClose} color="#2196F3" />
         </View>
       </View>
@@ -44,5 +52,12 @@ const styles = StyleSheet.create({
   code: {
     fontWeight: 'bold',
     color: '#e91e63',
+  },
+  prediction: {
+    marginTop: 10,
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#4caf50',
+    textAlign: 'center',
   },
 });
