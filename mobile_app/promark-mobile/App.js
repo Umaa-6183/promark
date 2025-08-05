@@ -1,18 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  Alert,
-  ScrollView,
-  StyleSheet,
-  StatusBar,
-} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, ScrollView, View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
 import RewardModal from './components/RewardModal';
 import CampaignCarousel from './components/CampaignCarousel';
-import Constants from 'expo-constants';
-const apiBase = Constants.expoConfig.extra.API_BASE;
 
 export default function App() {
   const [name, setName] = useState('');
@@ -20,134 +9,147 @@ export default function App() {
   const [transactionId, setTransactionId] = useState('');
   const [purchasedItem, setPurchasedItem] = useState('');
   const [futureInterest, setFutureInterest] = useState('');
-  const [showRewardModal, setShowRewardModal] = useState(false);
+  const [rewardVisible, setRewardVisible] = useState(false);
+  const [predictedAd, setPredictedAd] = useState('');
   const [campaigns, setCampaigns] = useState([]);
 
   // Fetch campaigns from backend
   useEffect(() => {
-    fetchCampaigns();
+    fetch('https://promark.onrender.com/campaigns')
+      .then((res) => res.json())
+      .then((data) => setCampaigns(data.campaigns || []))
+      .catch((error) => {
+        console.error('Failed to fetch campaigns:', error);
+      });
   }, []);
 
-  const fetchCampaigns = async () => {
-    try {
-      const res = await fetch('https://promark.onrender.com/campaigns');
-      const data = await res.json();
-      setCampaigns(data);
-    } catch (error) {
-      console.error('Error fetching campaigns:', error.message);
-      Alert.alert('Error', 'Unable to load campaigns');
-    }
-  };
-
-  // Handle form submission
   const handleSubmit = async () => {
     if (!name || !phone || !transactionId || !purchasedItem || !futureInterest) {
-      Alert.alert('Missing Fields', 'Please fill all the fields');
+      Alert.alert('Please fill all fields');
       return;
     }
 
+    const payload = {
+      name,
+      phone,
+      transaction_id: transactionId,
+      purchased_item: purchasedItem,
+      future_interest: futureInterest.split(',').map(item => item.trim()),
+    };
+
     try {
-      const response = await fetch('https://promark.onrender.com/feedback', {
+      const res = await fetch('https://promark.onrender.com/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name,
-          phone,
-          transactionId,
-          purchasedItem,
-          futureInterest,
-        }),
+        body: JSON.stringify(payload),
       });
 
-      if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.message || 'Submission failed');
-      }
+      const data = await res.json();
 
-      const data = await response.json();
-      console.log('✅ Feedback submitted:', data);
-      setShowRewardModal(true);
+      if (res.ok) {
+        setPredictedAd(data.predicted_ad);
+        setRewardVisible(true);
+        // Reset form
+        setName('');
+        setPhone('');
+        setTransactionId('');
+        setPurchasedItem('');
+        setFutureInterest('');
+      } else {
+        Alert.alert('Submission failed', data.message || 'Try again');
+      }
     } catch (error) {
-      console.log('❌ Submission error:', error.message);
-      Alert.alert('Network Error', error.message);
+      Alert.alert('Network error', error.message);
     }
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <StatusBar barStyle="dark-content" />
-      <Text style={styles.heading}>📝 SmartAdX Feedback</Text>
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scroll}>
+        <Text style={styles.title}>ProMark Feedback Form</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Your Name"
-        value={name}
-        onChangeText={setName}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Phone Number"
-        keyboardType="numeric"
-        value={phone}
-        onChangeText={setPhone}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Transaction ID"
-        value={transactionId}
-        onChangeText={setTransactionId}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Purchased Item"
-        value={purchasedItem}
-        onChangeText={setPurchasedItem}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Future Interest (comma-separated)"
-        value={futureInterest}
-        onChangeText={setFutureInterest}
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Name"
+          value={name}
+          onChangeText={setName}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Phone"
+          value={phone}
+          onChangeText={setPhone}
+          keyboardType="phone-pad"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Transaction ID"
+          value={transactionId}
+          onChangeText={setTransactionId}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Purchased Item"
+          value={purchasedItem}
+          onChangeText={setPurchasedItem}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Future Interests (comma-separated)"
+          value={futureInterest}
+          onChangeText={setFutureInterest}
+        />
 
-      <View style={styles.button}>
-        <Button title="🚀 SUBMIT FEEDBACK" onPress={handleSubmit} color="#2196F3" />
-      </View>
+        <View style={styles.buttonContainer}>
+          <Button title="Submit Feedback" onPress={handleSubmit} />
+        </View>
 
-      <Text style={styles.sectionTitle}>🔥 Active Campaigns</Text>
-      <CampaignCarousel campaigns={campaigns} />
+        <Text style={styles.subtitle}>🎯 Active Campaigns</Text>
+        <CampaignCarousel campaigns={campaigns} />
+      </ScrollView>
 
-      <RewardModal visible={showRewardModal} onClose={() => setShowRewardModal(false)} />
-    </ScrollView>
+      <RewardModal
+        visible={rewardVisible}
+        onClose={() => setRewardVisible(false)}
+        predictedAd={predictedAd}
+      />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
-    paddingBottom: 40,
-    backgroundColor: '#fff',
-    flexGrow: 1,
+    flex: 1,
+    backgroundColor: '#f7f7f7',
   },
-  heading: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 15,
+  scroll: {
+    padding: 20,
+    paddingBottom: 80,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: '700',
+    marginBottom: 20,
+    textAlign: 'center',
+    color: '#333',
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    padding: 10,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 12,
     marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
-  button: {
+  buttonContainer: {
     marginTop: 10,
     marginBottom: 20,
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
+  subtitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    marginVertical: 20,
+    textAlign: 'center',
+    color: '#444',
   },
 });
