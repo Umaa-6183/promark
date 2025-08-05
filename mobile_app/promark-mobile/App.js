@@ -11,6 +11,8 @@ import {
 } from 'react-native';
 import RewardModal from './components/RewardModal';
 import CampaignCarousel from './components/CampaignCarousel';
+import Constants from 'expo-constants';
+const apiBase = Constants.expoConfig.extra.API_BASE;
 
 export default function App() {
   const [name, setName] = useState('');
