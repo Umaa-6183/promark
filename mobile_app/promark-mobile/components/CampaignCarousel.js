@@ -1,72 +1,84 @@
-import React, { useRef, useEffect } from 'react';
-import { ScrollView, View, Text, Image, StyleSheet, Dimensions } from 'react-native';
+import React, { useRef, useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  Image,
+  StyleSheet,
+  Dimensions
+} from 'react-native';
 
 const { width } = Dimensions.get('window');
 
 const CampaignCarousel = ({ campaigns }) => {
-  const scrollRef = useRef(null);
-  let scrollX = 0;
+  const flatListRef = useRef(null);
+  const [index, setIndex] = useState(0);
 
   useEffect(() => {
+    if (!campaigns || campaigns.length === 0) return;
+
     const interval = setInterval(() => {
-      if (scrollRef.current && campaigns.length > 0) {
-        scrollX += width * 0.85;
-
-        if (scrollX >= campaigns.length * width * 0.85) {
-          scrollX = 0;
-        }
-
-        scrollRef.current.scrollTo({ x: scrollX, animated: true });
-      }
-    }, 3000);
+      const nextIndex = (index + 1) % campaigns.length;
+      flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
+      setIndex(nextIndex);
+    }, 3000); // Auto-scroll every 3 seconds
 
     return () => clearInterval(interval);
-  }, [campaigns]);
+  }, [index, campaigns]);
+
+  const renderItem = ({ item }) => (
+    <View style={styles.card}>
+      <Image
+        source={{ uri: item.image_url }}
+        style={styles.image}
+        resizeMode="cover"
+      />
+      <Text style={styles.title}>{item.title}</Text>
+      <Text style={styles.desc}>{item.description}</Text>
+    </View>
+  );
 
   return (
-    <ScrollView
-      ref={scrollRef}
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      style={styles.carousel}
-    >
-      {campaigns.map((campaign) => (
-        <View key={campaign.id} style={styles.card}>
-          <Image source={{ uri: campaign.image_url }} style={styles.image} />
-          <Text style={styles.title}>{campaign.title}</Text>
-          <Text style={styles.description}>{campaign.description}</Text>
-        </View>
-      ))}
-    </ScrollView>
+    <View style={styles.container}>
+      <FlatList
+        ref={flatListRef}
+        data={campaigns}
+        keyExtractor={(item) => item.id.toString()}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        renderItem={renderItem}
+        pagingEnabled
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  carousel: {
-    marginTop: 10,
+  container: {
+    marginTop: 20,
   },
   card: {
     width: width * 0.85,
     marginRight: 15,
     backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 10,
-    elevation: 2,
+    borderRadius: 12,
+    overflow: 'hidden',
+    elevation: 3,
   },
   image: {
     width: '100%',
     height: 150,
-    borderRadius: 10,
-    resizeMode: 'cover',
   },
   title: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginTop: 10,
+    fontSize: 18,
+    fontWeight: 'bold',
+    padding: 8,
   },
-  description: {
+  desc: {
     fontSize: 14,
     color: '#555',
+    paddingHorizontal: 8,
+    paddingBottom: 10,
   },
 });
 

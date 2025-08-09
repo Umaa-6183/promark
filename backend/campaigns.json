@@ -3,36 +3,36 @@
     "id": 1,
     "title": "Laptop Bonanza",
     "description": "Flat ₹10,000 off on selected laptops.",
-    "image_url": "https://dummyimage.com/400x200/000/fff&text=Laptop+Bonanza"
+    "image_url": "https://res.cloudinary.com/dnaufetqk/image/upload/v1754715722/mega-sale-special-offer-neon-260nw-2150286415_xwa5oj.webp"
   },
   {
     "id": 2,
     "title": "Smartphone Fest",
     "description": "Up to 40% off on Android and iOS smartphones.",
-    "image_url": "https://dummyimage.com/400x200/333/fff&text=Smartphone+Fest"
+    "image_url": "https://res.cloudinary.com/dnaufetqk/image/upload/v1754715722/mega-sale-advertiving-banner-3d-260nw-2000590271_axmpip.webp"
   },
   {
     "id": 3,
     "title": "Smart TV Carnival",
     "description": "Big screen TVs at unbelievable prices!",
-    "image_url": "https://dummyimage.com/400x200/555/fff&text=Smart+TV+Carnival"
+    "image_url": "https://res.cloudinary.com/dnaufetqk/image/upload/v1754715722/mega-sale-special-offer-neon-260nw-2160421231_lmbk0e.webp"
   },
   {
     "id": 4,
     "title": "Gadget Week",
     "description": "Smartwatches, earbuds, and more starting at ₹999.",
-    "image_url": "https://dummyimage.com/400x200/777/fff&text=Gadget+Week"
+    "image_url": "https://res.cloudinary.com/dnaufetqk/image/upload/v1754715723/Intel_ascent-1400x800_banner._SX1242_QL85__wcbdpr.jpg"
   },
   {
     "id": 5,
     "title": "Camera Clearance",
     "description": "Up to 50% off on DSLR and mirrorless cameras.",
-    "image_url": "https://dummyimage.com/400x200/999/fff&text=Camera+Clearance"
+    "image_url": "https://res.cloudinary.com/dnaufetqk/image/upload/v1754715722/mega-sale-special-offer-neon-260nw-2160421231_lmbk0e.webp"
   },
   {
     "id": 6,
     "title": "Gaming Gear Sale",
     "description": "Top brands of gaming accessories at lowest prices.",
-    "image_url": "https://dummyimage.com/400x200/222/fff&text=Gaming+Gear+Sale"
+    "image_url": "https://res.cloudinary.com/dnaufetqk/image/upload/v1754716310/amazon-great-freedom-festival-saleamazon-123033370_i1gh1t.avif"
   }
 ]

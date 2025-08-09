@@ -12,7 +12,7 @@ export default function RewardModal({ visible, onClose, predictedAd }) {
 
           {/* 🔥 Personalized Prediction Message */}
           {predictedAd && (
-            <Text style={styles.prediction}>
+            <Text style={styles.text}>
               🎯 Personalized Ad Recommendation: {predictedAd}
             </Text>
           )}

@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, ScrollView, View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import {
+  SafeAreaView,
+  ScrollView,
+  View,
+  Text,
+  TextInput,
+  Button,
+  Alert,
+  StyleSheet
+} from 'react-native';
 import RewardModal from './components/RewardModal';
 import CampaignCarousel from './components/CampaignCarousel';
 
@@ -13,7 +22,7 @@ export default function App() {
   const [predictedAd, setPredictedAd] = useState('');
   const [campaigns, setCampaigns] = useState([]);
 
-  // Fetch campaigns from backend
+  // ✅ Fetch campaigns on mount
   useEffect(() => {
     fetch('https://promark.onrender.com/campaigns')
       .then((res) => res.json())
@@ -34,21 +43,22 @@ export default function App() {
       phone,
       transaction_id: transactionId,
       purchased_item: purchasedItem,
-      future_interest: futureInterest.split(',').map(item => item.trim()),
+      future_interest: futureInterest.split(',').map((item) => item.trim()),
     };
 
     try {
-      const res = await fetch('https://promark.onrender.com/feedback', {
+      const response = await fetch('https://promark.onrender.com/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
-      const data = await res.json();
+      const data = await response.json();
 
-      if (res.ok) {
-        setPredictedAd(data.predicted_ad);
+      if (response.ok && data.prediction) {
+        setPredictedAd(data.prediction);
         setRewardVisible(true);
+
         // Reset form
         setName('');
         setPhone('');
@@ -59,7 +69,8 @@ export default function App() {
         Alert.alert('Submission failed', data.message || 'Try again');
       }
     } catch (error) {
-      Alert.alert('Network error', error.message);
+      console.error('Feedback submission failed:', error);
+      Alert.alert('Error', 'Network or server issue. Try again later.');
     }
   };
 
