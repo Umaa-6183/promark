@@ -45,38 +45,35 @@ class Feedback(BaseModel):
     future_interest: List[str]
 
 # ✅ Dummy prediction logic (can be replaced with ML model)
-def predict_campaign(future_interest, rating):
+def predict_campaign(feedback_text: str, rating: int) -> str:
     """
-    A simple AI/ML placeholder logic that predicts an ad campaign
-    based on future interest keywords and user rating.
-    You can replace this with your real ML model later.
+    Simple rule-based campaign prediction logic.
+    Always returns a valid campaign name.
     """
-    # Normalize input
-    if isinstance(future_interest, str):
-        future_interest = future_interest.lower()
-    elif isinstance(future_interest, list):
-        future_interest = " ".join(future_interest).lower()
-    else:
-        future_interest = ""
 
-    # Sample prediction logic
-    if "electronics" in future_interest:
-        return "Exclusive Deals on Electronics"
-    elif "fashion" in future_interest:
-        return "Latest Fashion Trends Sale"
-    elif "groceries" in future_interest:
-        return "Fresh Grocery Discounts"
-    elif rating and rating >= 4:
-        return "Loyalty Bonus Offer"
-    else:
-        # Fallback generic ad
-        campaigns = [
-            "Mega Festive Sale",
-            "Limited Time Discount",
-            "Buy 1 Get 1 Free",
-            "Seasonal Clearance Offer"
-        ]
-        return random.choice(campaigns)
+    # Ensure feedback_text is a string
+    feedback_text = (feedback_text or "").lower().strip()
+
+    # Rule-based prediction
+    if rating >= 4:
+        if "discount" in feedback_text or "sale" in feedback_text:
+            return "Discount Campaign"
+        elif "new" in feedback_text or "launch" in feedback_text:
+            return "New Product Launch"
+        else:
+            return "General Offers Campaign"
+
+    elif rating == 3:
+        return "Engagement Campaign"
+
+    elif rating <= 2:
+        if "issue" in feedback_text or "bad" in feedback_text:
+            return "Customer Support Follow-up"
+        else:
+            return "Re-engagement Campaign"
+
+    # Fallback (just in case)
+    return "General Campaign"
 
 # ✅ Root route
 @app.get("/")
