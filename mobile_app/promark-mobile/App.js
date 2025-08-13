@@ -24,23 +24,17 @@ export default function App() {
 
   // ✅ Fetch campaigns on mount
   useEffect(() => {
-  fetch('https://promark.onrender.com/campaigns')
-    .then((res) => res.json())
-    .then((data) => {
-      console.log('Fetched campaigns:', data);
-      // Adapt to array or object automatically
-      if (Array.isArray(data)) {
-        setCampaigns(data);
-      } else if (data.campaigns) {
-        setCampaigns(data.campaigns);
-      } else {
-        setCampaigns([]);
-      }
-    })
-    .catch((error) => {
-      console.error('Failed to fetch campaigns:', error);
-    });
-}, []);
+    fetch('https://promark.onrender.com/campaigns')
+      .then((res) => res.json())
+      .then((data) => {
+        // FIX: your backend returns an array, not { campaigns: [...] }
+        setCampaigns(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => {
+        console.error('Error fetching campaigns:', err);
+        Alert.alert('Error', 'Unable to load campaigns.');
+      });
+  }, []);
 
 
   const handleSubmit = async () => {
