@@ -30,7 +30,7 @@ const CampaignCarousel = ({ campaigns }) => {
     <View style={styles.card}>
       <Image
         source={{ uri: item.image_url }}
-        style={styles.image}
+        style={{ width: 300, height: 150, borderRadius: 10 }}
         resizeMode="cover"
       />
       <Text style={styles.title}>{item.title}</Text>
