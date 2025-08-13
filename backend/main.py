@@ -1,103 +1,114 @@
-import os
-import sqlite3
-import uuid
-import json
-from typing import List
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import campaigns
-from database import create_feedback_table, insert_feedback, get_all_feedbacks
+import sqlite3
 
-# ✅ Initialize FastAPI app
-app = FastAPI(title="SmartAdX API")
+app = FastAPI()
 
-# ✅ Enable CORS (for web + mobile)
+# Allow CORS for frontend and mobile app
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Change in production
+    allow_origins=["*"],  # You can restrict to your domains later
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# ✅ Include campaign router
-app.include_router(campaigns.router)
+# ------------------------------
+# Database helpers
+# ------------------------------
 
-# ✅ Create feedback table on startup
-create_feedback_table()
+# Feedbacks DB
+FEEDBACK_DB = "feedbacks.db"
 
-# ✅ Campaigns.json loader
-BASE_DIR = os.path.dirname(__file__)
-CAMPAIGN_FILE = os.path.join(BASE_DIR, "campaigns.json")
-if os.path.exists(CAMPAIGN_FILE):
-    with open(CAMPAIGN_FILE, "r") as f:
-        campaign_data = json.load(f)
-else:
-    campaign_data = []
+def init_feedback_db():
+    conn = sqlite3.connect(FEEDBACK_DB)
+    c = conn.cursor()
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS feedbacks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            token TEXT,
+            name TEXT,
+            phone TEXT,
+            transaction_id TEXT,
+            purchased_item TEXT,
+            future_interest TEXT,
+            rating INTEGER,
+            predicted_ad TEXT
+        )
+    """)
+    conn.commit()
+    conn.close()
 
-# ✅ Feedback model
-class Feedback(BaseModel):
-    name: str
-    phone: str
-    transaction_id: str
-    purchased_item: str
-    future_interest: List[str]
+def insert_feedback(data: dict):
+    conn = sqlite3.connect(FEEDBACK_DB)
+    c = conn.cursor()
+    c.execute("""
+        INSERT INTO feedbacks
+        (token, name, phone, transaction_id, purchased_item, future_interest, rating, predicted_ad)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        data["token"],
+        data["name"],
+        data["phone"],
+        data["transaction_id"],
+        data["purchased_item"],
+        data["future_interest"],
+        data.get("rating", 3),
+        data["predicted_ad"]
+    ))
+    conn.commit()
+    conn.close()
 
-# ✅ Dummy prediction logic (can be replaced with ML model)
-def predict_campaign(feedback_text: str, rating: int) -> str:
-    """
-    Simple rule-based campaign prediction logic.
-    Always returns a valid campaign name.
-    """
+# Campaigns DB
+CAMPAIGN_DB = "promark.db"
 
-    # Ensure feedback_text is a string
-    feedback_text = (feedback_text or "").lower().strip()
-
-    # Rule-based prediction
-    if rating >= 4:
-        if "discount" in feedback_text or "sale" in feedback_text:
-            return "Discount Campaign"
-        elif "new" in feedback_text or "launch" in feedback_text:
-            return "New Product Launch"
-        else:
-            return "General Offers Campaign"
-
-    elif rating == 3:
-        return "Engagement Campaign"
-
-    elif rating <= 2:
-        if "issue" in feedback_text or "bad" in feedback_text:
-            return "Customer Support Follow-up"
-        else:
-            return "Re-engagement Campaign"
-
-    # Fallback (just in case)
-    return "General Campaign"
-
-# ✅ Root route
-@app.get("/")
-def home():
-    return {"message": "SmartAdX API Running"}
-
-# ✅ Return all campaigns
-@app.get("/campaigns")
 def get_campaigns():
-    return campaign_data
+    conn = sqlite3.connect(CAMPAIGN_DB)
+    c = conn.cursor()
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS campaigns (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            description TEXT,
+            image_url TEXT
+        )
+    """)
+    conn.commit()
+    c.execute("SELECT name, description, image_url FROM campaigns")
+    rows = c.fetchall()
+    conn.close()
+    return [{"name": r[0], "description": r[1], "image_url": r[2]} for r in rows]
 
-# ✅ Return all feedbacks
-@app.get("/feedbacks")
-def all_feedbacks():
-    return {"feedbacks": get_all_feedbacks()}
+# ------------------------------
+# Prediction Logic
+# ------------------------------
+def predict_campaign(future_interest, rating):
+    # Ensure string for prediction
+    if isinstance(future_interest, list):
+        future_interest = ", ".join(future_interest)
+    if not isinstance(future_interest, str):
+        future_interest = str(future_interest)
 
-# ✅ Submit feedback with prediction
+    fi_lower = future_interest.lower()
+
+    if "laptop" in fi_lower:
+        return "Laptop Accessories"
+    elif "phone" in fi_lower or "mobile" in fi_lower:
+        return "Mobile Covers"
+    elif "shoes" in fi_lower:
+        return "Sports Shoes"
+    elif "watch" in fi_lower:
+        return "Smart Watches"
+    else:
+        return "General Offers"
+
+# ------------------------------
+# Routes
+# ------------------------------
+
 @app.post("/feedback")
 async def submit_feedback(feedback: dict):
-    """
-    Store feedback from mobile app and return ad prediction
-    """
     try:
-        # Extract required fields
         token = feedback.get("token")
         name = feedback.get("name")
         phone = feedback.get("phone")
@@ -106,23 +117,20 @@ async def submit_feedback(feedback: dict):
         future_interest = feedback.get("future_interest", "")
         rating = feedback.get("rating", 3)
 
-        # Ensure future_interest is stored as string or list
-        if isinstance(future_interest, str):
-            future_interest_json = future_interest
-        else:
-            future_interest_json = json.dumps(future_interest)
+        # Convert list to string if needed
+        if isinstance(future_interest, list):
+            future_interest = ", ".join(future_interest)
 
-        # Run prediction
         predicted_ad = predict_campaign(future_interest, rating)
 
-        # Insert into DB
         insert_feedback({
             "token": token,
             "name": name,
             "phone": phone,
             "transaction_id": transaction_id,
             "purchased_item": purchased_item,
-            "future_interest": future_interest_json,
+            "future_interest": future_interest,
+            "rating": rating,
             "predicted_ad": predicted_ad
         })
 
@@ -130,3 +138,18 @@ async def submit_feedback(feedback: dict):
 
     except Exception as e:
         return {"status": "error", "message": str(e)}
+
+@app.get("/campaigns")
+async def campaigns():
+    try:
+        return {"status": "success", "campaigns": get_campaigns()}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+# ------------------------------
+# Initialize DB on startup
+# ------------------------------
+@app.on_event("startup")
+def startup_event():
+    init_feedback_db()
+
