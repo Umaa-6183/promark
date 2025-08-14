@@ -5,8 +5,19 @@ import sqlite3
 from typing import List
 import random
 import json
+import os
 # Local import for DB setup
 from database import create_feedback_table
+
+
+
+BASE_DIR = os.path.dirname(__file__)
+
+feedback_db_path = os.path.join(BASE_DIR, "feedbacks.db")
+promark_db_path = os.path.join(BASE_DIR, "promark.db")
+
+# Example:
+conn = sqlite3.connect(feedback_db_path)
 
 app = FastAPI()
 
@@ -49,7 +60,7 @@ def submit_feedback(feedback: Feedback):
     try:
         prediction = predict_campaign(feedback.future_interest)
 
-        conn = sqlite3.connect("backend/feedbacks.db")
+        conn = sqlite3.connect(feedback_db_path)
         c = conn.cursor()
         c.execute("""
             INSERT INTO feedbacks (name, phone, transaction_id, purchased_item, future_interest, predicted_ad)
@@ -73,7 +84,7 @@ def submit_feedback(feedback: Feedback):
 @app.get("/feedbacks")
 def get_feedbacks():
     try:
-        conn = sqlite3.connect("backend/feedbacks.db")
+        conn = sqlite3.connect(feedback_db_path)
         c = conn.cursor()
         c.execute("""
             SELECT token, name, phone, transaction_id, purchased_item, future_interest, predicted_ad
@@ -103,7 +114,7 @@ def get_feedbacks():
 def get_campaigns():
     """Return all campaigns with image URLs."""
     try:
-        conn = sqlite3.connect("backend/promark.db")
+        conn = sqlite3.connect(promark_db_path)
         c = conn.cursor()
         # Ensure column names match db_setup.py: id, name, description, image_url
         c.execute("SELECT id, name, description, image_url FROM campaigns")
@@ -123,7 +134,7 @@ def get_campaigns():
 def get_stats():
     """Return stats for dashboard charts."""
     try:
-        conn = sqlite3.connect("backend/feedbacks.db")
+        conn = sqlite3.connect(feedback_db_path)
         c = conn.cursor()
         c.execute("SELECT future_interest, predicted_ad FROM feedbacks")
         rows = c.fetchall()
