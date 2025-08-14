@@ -70,7 +70,7 @@ def submit_feedback(feedback: Feedback):
             feedback.phone,
             feedback.transaction_id,
             feedback.purchased_item,
-            ",".join(feedback.future_interest),
+            json.dumps(feedback.future_interest),  # <-- store as JSON string
             prediction
         ))
         conn.commit()
@@ -81,6 +81,7 @@ def submit_feedback(feedback: Feedback):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# ...existing code...
 @app.get("/feedbacks")
 def get_feedbacks():
     try:
@@ -108,7 +109,10 @@ def get_feedbacks():
         return {"status": "success", "feedbacks": feedback_list}
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        # Always return feedbacks as an array, even on error
+        return {"status": "error", "feedbacks": [], "detail": str(e)}
+# ...existing code...
+
 
 @app.get("/campaigns")
 def get_campaigns():
