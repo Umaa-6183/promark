@@ -1,31 +1,23 @@
-/* src/pages/FeedbackLog.css */
-
-.feedback-log {
-  padding: 20px;
-}
-
-.page-title {
-  font-size: 1.5rem;
-  margin-bottom: 20px;
-}
-
-.feedback-table-wrapper {
-  overflow-x: auto;
-}
-
-.feedback-table {
+.feedback-log table {
   width: 100%;
   border-collapse: collapse;
+  margin-top: 20px;
 }
 
-.feedback-table th,
-.feedback-table td {
+.feedback-log th, .feedback-log td {
   border: 1px solid #ddd;
-  padding: 12px;
+  padding: 12px 8px;
   text-align: left;
 }
 
-.feedback-table th {
-  background-color: #f4f4f4;
-  font-weight: bold;
+.feedback-log th {
+  background-color: #f2f2f2;
+}
+
+.feedback-log tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.feedback-log tr:hover {
+  background-color: #f1f1f1;
 }
