@@ -1,13 +1,12 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException 
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import sqlite3
 from typing import List
 import random
-
-# Local imports for DB connections
+import json
+# Local import for DB setup
 from database import create_feedback_table
-
 
 app = FastAPI()
 
@@ -47,105 +46,114 @@ def predict_campaign(future_interest: List[str]) -> str:
 @app.post("/feedback")
 def submit_feedback(feedback: Feedback):
     """Store feedback, generate prediction, return it."""
-    prediction = predict_campaign(feedback.future_interest)
+    try:
+        prediction = predict_campaign(feedback.future_interest)
 
-    conn = sqlite3.connect("feedbacks.db")
-    c = conn.cursor()
-    c.execute("""
-        INSERT INTO feedbacks (name, phone, transaction_id, purchased_item, future_interest, predicted_ad)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """, (
-        feedback.name,
-        feedback.phone,
-        feedback.transaction_id,
-        feedback.purchased_item,
-        ",".join(feedback.future_interest),
-        prediction
-    ))
-    conn.commit()
-    conn.close()
+        conn = sqlite3.connect("backend/feedbacks.db")
+        c = conn.cursor()
+        c.execute("""
+            INSERT INTO feedbacks (name, phone, transaction_id, purchased_item, future_interest, predicted_ad)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (
+            feedback.name,
+            feedback.phone,
+            feedback.transaction_id,
+            feedback.purchased_item,
+            ",".join(feedback.future_interest),
+            prediction
+        ))
+        conn.commit()
+        conn.close()
 
-    return {"status": "success", "prediction": prediction}
+        return {"status": "success", "prediction": prediction}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/feedbacks")
 def get_feedbacks():
-    """Return all feedback logs."""
-    conn = sqlite3.connect("feedbacks.db")
-    c = conn.cursor()
-    c.execute("""
-        SELECT id, name, phone, transaction_id, purchased_item, future_interest, predicted_ad
-        FROM feedbacks ORDER BY id DESC
-    """)
-    rows = c.fetchall()
-    conn.close()
+    try:
+        conn = sqlite3.connect("backend/feedbacks.db")
+        c = conn.cursor()
+        c.execute("""
+            SELECT token, name, phone, transaction_id, purchased_item, future_interest, predicted_ad
+            FROM feedbacks ORDER BY rowid DESC
+        """)
+        rows = c.fetchall()
+        conn.close()
 
-    feedback_list = [
-        {
-            "id": row[0],
-            "name": row[1],
-            "phone": row[2],
-            "transaction_id": row[3],
-            "purchased_item": row[4],
-            "future_interest": row[5].split(",") if row[5] else [],
-            "predicted_ad": row[6]
-        }
-        for row in rows
-    ]
-    return feedback_list
+        feedback_list = [
+            {
+                "token": row[0],
+                "name": row[1],
+                "phone": row[2],
+                "transaction_id": row[3],
+                "purchased_item": row[4],
+                "future_interest": json.loads(row[5]) if row[5] else [],
+                "predicted_ad": row[6]
+            }
+            for row in rows
+        ]
+        return {"status": "success", "feedbacks": feedback_list}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/campaigns")
 def get_campaigns():
     """Return all campaigns with image URLs."""
-    conn = sqlite3.connect("promark.db")
-    c = conn.cursor()
-    c.execute("SELECT id, name, description, image_url FROM campaigns")
-    rows = c.fetchall()
-    conn.close()
+    try:
+        conn = sqlite3.connect("backend/promark.db")
+        c = conn.cursor()
+        # Ensure column names match db_setup.py: id, name, description, image_url
+        c.execute("SELECT id, name, description, image_url FROM campaigns")
+        rows = c.fetchall()
+        conn.close()
 
-    campaigns = [
-        {
-            "id": row[0],
-            "name": row[1],
-            "description": row[2],
-            "image_url": row[3]
-        }
-        for row in rows
-    ]
-    return campaigns
+        campaigns = [
+            {"id": row[0], "name": row[1], "description": row[2], "image_url": row[3]}
+            for row in rows
+        ]
+        return {"status": "success", "campaigns": campaigns}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/stats")
 def get_stats():
     """Return stats for dashboard charts."""
-    conn = sqlite3.connect("feedbacks.db")
-    c = conn.cursor()
-    c.execute("SELECT future_interest, predicted_ad FROM feedbacks")
-    rows = c.fetchall()
-    conn.close()
+    try:
+        conn = sqlite3.connect("backend/feedbacks.db")
+        c = conn.cursor()
+        c.execute("SELECT future_interest, predicted_ad FROM feedbacks")
+        rows = c.fetchall()
+        conn.close()
 
-    interest_count = {}
-    ad_distribution = {}
+        interest_count = {}
+        ad_distribution = {}
 
-    for future_interest, predicted_ad in rows:
-        if future_interest:
-            for interest in future_interest.split(","):
-                interest = interest.strip()
-                interest_count[interest] = interest_count.get(interest, 0) + 1
+        for future_interest, predicted_ad in rows:
+            if future_interest:
+                for interest in future_interest.split(","):
+                    interest = interest.strip()
+                    interest_count[interest] = interest_count.get(interest, 0) + 1
 
-        if predicted_ad:
-            ad_distribution[predicted_ad] = ad_distribution.get(predicted_ad, 0) + 1
+            if predicted_ad:
+                ad_distribution[predicted_ad] = ad_distribution.get(predicted_ad, 0) + 1
 
-    return {
-        "interest_count": interest_count,
-        "ad_distribution": ad_distribution
-    }
+        return {
+            "interest_count": interest_count,
+            "ad_distribution": ad_distribution
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # ---------- INIT DBs ----------
-
 @app.on_event("startup")
 def startup_event():
-    create_feedback_table()  # Sets up feedbacks.db
-     
-    
+    create_feedback_table()  # Sets up feedbacks.db if not exists
+
 @app.get("/")
 def root():
     return {"message": "ProMark Backend is running"}

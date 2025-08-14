@@ -55,3 +55,7 @@ def get_all_feedbacks():
             }
             for row in rows
         ]
+
+if __name__ == "__main__":
+    create_feedback_table()
+    print("feedbacks.db created (if it did not exist) and feedbacks table ensured.")
