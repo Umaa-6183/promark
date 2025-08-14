@@ -27,8 +27,10 @@ export default function App() {
     fetch('https://promark.onrender.com/campaigns')
       .then((res) => res.json())
       .then((data) => {
-        // FIX: your backend returns an array, not { campaigns: [...] }
-        setCampaigns(Array.isArray(data) ? data : []);
+      // Handle both formats: array or { campaigns: [...] }
+        const list = Array.isArray(data) ? data : (data.campaigns || []);
+        console.log("Campaigns fetched:", list.length);
+        setCampaigns(list);
       })
       .catch((err) => {
         console.error('Error fetching campaigns:', err);
