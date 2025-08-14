@@ -5,15 +5,21 @@ import '../styles/FeedbackLog.css';
 function FeedbackLog () {
   const [feedbacks, setFeedbacks] = useState([]);
 
+  // ...existing code...
   useEffect(() => {
     fetch("https://promark.onrender.com/feedbacks")
       .then((res) => res.json())
       .then((data) =>  {
-        console.log("Fetched feedbacks:", data.feedbacks);
-        setFeedbacks(data.feedbacks);
+        // Ensure feedbacks is always an array
+        const safeFeedbacks = Array.isArray(data.feedbacks) ? data.feedbacks : [];
+        setFeedbacks(safeFeedbacks);
       })
-      .catch((err) => console.error("Error fetching feedbacks:", err));
-  }, []);
+      .catch((err) => {
+        console.error("Error fetching feedbacks:", err);
+        setFeedbacks([]); // fallback to empty array on error
+      });
+},   []);
+// ...existing code...
 
   return (
     <div className="feedback-log">
