@@ -7,7 +7,7 @@ import random
 
 # Local imports for DB connections
 from database import create_feedback_table
-from db_setup import init_campaign_db
+
 
 app = FastAPI()
 
@@ -144,7 +144,7 @@ def get_stats():
 @app.on_event("startup")
 def startup_event():
     create_feedback_table()  # Sets up feedbacks.db
-    init_campaign_db()   
+     
     
 @app.get("/")
 def root():
