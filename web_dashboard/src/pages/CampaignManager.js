@@ -3,8 +3,8 @@ import '../styles/CampaignManager.css';
 
 const CampaignManager = () => {
   const [campaigns, setCampaigns] = useState([
-    { id: 1, title: 'Summer Sale', image: 'https://via.placeholder.com/150', audience: 'Teens' },
-    { id: 2, title: 'Back to School', image: 'https://via.placeholder.com/150', audience: 'Students' },
+    { id: 1, title: 'Smartphone Fest', image: "https://res.cloudinary.com/dnaufetqk/image/upload/v1754715722/mega-sale-advertiving-banner-3d-260nw-2000590271_axmpip.webp", audience: 'Teens' },
+    { id: 2, title: 'Laptop Bonanza', image: "https://res.cloudinary.com/dnaufetqk/image/upload/v1754715722/mega-sale-special-offer-neon-260nw-2150286415_xwa5oj.webp", audience: 'Students' },
   ]);
 
   const [form, setForm] = useState({ title: '', image: '', audience: '' });

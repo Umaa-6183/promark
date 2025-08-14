@@ -6,8 +6,13 @@ from typing import List
 import random
 
 # Local imports for DB connections
+<<<<<<< HEAD
 from database import init_db as init_feedback_db
 from db_setup import init_db as init_campaign_db
+=======
+from database import create_feedback_table
+from db_setup import init_campaign_db
+>>>>>>> f9374a9 (Local changes: db setup fix, main.py update, carousel improvement, campaign manager UI)
 
 app = FastAPI()
 
@@ -140,9 +145,17 @@ def get_stats():
     }
 
 # ---------- INIT DBs ----------
+<<<<<<< HEAD
 init_feedback_db()
 init_campaign_db()
 
+=======
+@app.on_event("startup")
+def startup_event():
+    create_feedback_table()  # Sets up feedbacks.db
+    init_campaign_db()   
+    
+>>>>>>> f9374a9 (Local changes: db setup fix, main.py update, carousel improvement, campaign manager UI)
 @app.get("/")
 def root():
     return {"message": "ProMark Backend is running"}
