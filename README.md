@@ -1,13 +1,13 @@
-📊 SmartAdX
+SmartAdX
 SmartAdX is an intelligent advertising platform that collects customer feedback, predicts relevant ads using machine learning, and displays targeted campaigns. It includes:
 
-🧠 Backend with FastAPI + ML model + SQLite
+Backend with FastAPI + ML model + SQLite
 
-📱 Mobile app using React Native (Expo)
+Mobile app using React Native (Expo)
 
-🖥️ Web dashboard using ReactJS + Charts + SQLite integration
+Web dashboard using ReactJS + Charts + SQLite integration
 
-🗂️ Project Structure
+Project Structure
 
 ProMark/
 ├── backend/              # FastAPI backend + SQLite + ML
@@ -18,9 +18,9 @@ ProMark/
 ├── ml_models/            # ad_predictor.pkl and ad_encoder.pkl
 └── deployment/           # (Optional) deployment configs
 
-⚙️ Backend Setup (/backend)
+Backend Setup (/backend)
 
-✅ Requirements
+Requirements
 
 Python 3.10+
 
@@ -28,12 +28,12 @@ pip install -r requirements.txt
 
 SQLite3 (pre-installed with Python)
 
-✅ Run locally
+Run locally
 
 cd backend
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
-✅ API Endpoints
+API Endpoints
 
 | Method | Endpoint            | Description                      |
 | ------ | ------------------- | -------------------------------- |
@@ -42,19 +42,19 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 | GET    | `/feedbacks-sqlite` | Return feedbacks from SQLite     |
 | POST   | `/feedback`         | Submit feedback + get prediction |
 
-📱 Mobile App Setup (/mobile_app/promark-mobile)
-✅ Requirements
+Mobile App Setup (/mobile_app/promark-mobile)
+Requirements
 Node.js + npm
 
 Expo CLI (npm install -g expo-cli)
 
-✅ Run locally
+Run locally
 
 cd mobile_app/promark-mobile
 npm install
 npx expo start
 
-🧠 The mobile app will:
+The mobile app will:
 
 Collect user feedback (name, phone, transaction, interest)
 
@@ -64,33 +64,33 @@ Show predicted ad + instant reward
 
 Display active campaigns in a carousel
 
-🖥️ Web Dashboard Setup (/web_dashboard)
+Web Dashboard Setup (/web_dashboard)
 
-✅ Requirements
+Requirements
 
 Node.js + npm
 
-✅ Run locally
+Run locally
 
 cd web_dashboard
 npm install
 npm start
 
-✅ Features
+Features
 
-📊 Admin dashboard with analytics
+Admin dashboard with analytics
 
-🗃 Feedback log table (via SQLite)
+Feedback log table (via SQLite)
 
-🧩 Campaign manager (create/view)
+Campaign manager (create/view)
 
-⚙️ Settings section (UI only)
+Settings section (UI only)
 
-📈 Pie chart (Ad distribution)
+Pie chart (Ad distribution)
 
-📉 Bar chart (Interest trends)
+Bar chart (Interest trends)
 
-🧠 Machine Learning
+Machine Learning
 
 Located in ml_models/:
 
@@ -102,7 +102,7 @@ Used in /feedback route to predict relevant ad
 
 Predictions stored along with feedback in feedbacks.db
 
-🔐 Blockchain Log (Simulation)
+Blockchain Log (Simulation)
 
 Located in smart_contracts/log_chain.py
 
